@@ -22,7 +22,7 @@ class _LoadingScreenState extends State<LoadingScreen>
     // Initialize animation controller
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2), // Total duration including morph
+      duration: const Duration(seconds: 3), // Total duration including morph
     );
 
     // Define animations
@@ -45,7 +45,7 @@ class _LoadingScreenState extends State<LoadingScreen>
     _animationController.forward();
 
     // Schedule the transition to HomeScreen
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),
