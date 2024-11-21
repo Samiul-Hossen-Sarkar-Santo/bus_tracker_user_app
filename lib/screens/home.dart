@@ -16,7 +16,6 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Colors.green[900],
         centerTitle: true,
       ),
-<<<<<<< HEAD
       body: Column(
         children: [
           // Search bar at the top
@@ -32,17 +31,6 @@ class HomeScreen extends StatelessWidget {
                 filled: true,
                 fillColor: Colors.white,
               ),
-=======
-      body: Container(
-        padding: const EdgeInsets.all(16),
-        color: Colors.grey[100],
-        child: Center(
-          child: Text(
-            'Welcome to the Home Screen!!!',
-            style: TextStyle(
-              fontSize: 20.0,
-              color: Colors.green[900],
->>>>>>> a970434d9630fcd104cd13014afa1fd59d176008
             ),
           ),
           // Grid layout for bus routes

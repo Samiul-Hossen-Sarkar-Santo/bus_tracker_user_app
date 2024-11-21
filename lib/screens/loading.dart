@@ -22,11 +22,7 @@ class _LoadingScreenState extends State<LoadingScreen>
     // Initialize animation controller
     _animationController = AnimationController(
       vsync: this,
-<<<<<<< HEAD
       duration: const Duration(seconds: 3),
-=======
-      duration: const Duration(seconds: 3), // Total duration including morph
->>>>>>> a970434d9630fcd104cd13014afa1fd59d176008
     );
 
     // Define animations
