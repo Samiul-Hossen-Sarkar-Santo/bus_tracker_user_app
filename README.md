@@ -41,7 +41,7 @@ The Bus Tracker User App is a mobile application built using Flutter that helps 
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Samiul-Hossen-Sarkar-Santo/bus_tracker_user_app.git
    ```
 
 2. Navigate to the project directory:
@@ -85,17 +85,3 @@ The Bus Tracker User App is a mobile application built using Flutter that helps 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
-```
-
----
-
-### Explanation:
-
-- **Overview**: A brief summary of the app's purpose and core functionality.
-- **Features**: Describes the key features that are part of the app.
-- **Tech Stack**: Lists the main technologies used to build the app.
-- **Setup**: Provides instructions on how to set up and run the app on your local machine.
-- **Release Notes**: Information about the current version of the app and what has been implemented so far.
-- **Future Improvements**: A list of features and improvements that you plan to implement in the future.
-
-This should give a clear and concise view of the project so far. When you’re ready to add a release for this version, you can follow the instructions to update the release notes.
