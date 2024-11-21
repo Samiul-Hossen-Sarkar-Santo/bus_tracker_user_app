@@ -1,9 +1,4 @@
-Certainly! Below is a `README.md` file for your project, reflecting the progress you've made so far on the bus tracker app.
-
-### `README.md`
-
-```markdown
-# Bus Tracker User App
+### `Bus Tracker User App`
 
 ## Overview
 
