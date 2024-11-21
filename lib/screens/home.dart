@@ -1,12 +1,29 @@
 import 'package:bus_tracker_user_app/models/route_model.dart';
-import 'package:bus_tracker_user_app/screens/routes.dart';
+import 'package:bus_tracker_user_app/screens/routes.dart'; // Import SearchPage
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  // Variable to store search query
+  String searchQuery = '';
+  final TextEditingController searchController = TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
+    // Filtered list of routes based on the search query
+    final filteredRoutes = RouteModel.values.where((route) {
+      return searchQuery.isEmpty ||
+          route.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
+          route.stops_in_order.any(
+              (stop) => stop.toLowerCase().contains(searchQuery.toLowerCase()));
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -22,9 +39,27 @@ class HomeScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
+              controller: searchController,
+              onChanged: (query) {
+                setState(() {
+                  searchQuery = query;
+                });
+              },
               decoration: InputDecoration(
                 hintText: 'Search for routes or stops...',
                 prefixIcon: const Icon(Icons.search),
+                suffixIcon: searchQuery.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          // Clear search field and reset state
+                          searchController.clear();
+                          setState(() {
+                            searchQuery = '';
+                          });
+                        },
+                      )
+                    : null, // Show clear button only if searchQuery is not empty
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
@@ -33,7 +68,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          // Grid layout for bus routes
+          // Grid layout for filtered bus routes
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -44,9 +79,10 @@ class HomeScreen extends StatelessWidget {
                   crossAxisSpacing: 16.0,
                   childAspectRatio: 3 / 2, // Aspect ratio for cards
                 ),
-                itemCount: RouteModel.values.length,
+                itemCount: filteredRoutes.length,
                 itemBuilder: (context, index) {
-                  final route = RouteModel.values[index];
+                  final route = filteredRoutes[index];
+
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(
