@@ -1,4 +1,4 @@
-### `Bus Tracker User App`
+### Bus Tracker User App
 
 ## Overview
 
