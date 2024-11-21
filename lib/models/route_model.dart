@@ -20,42 +20,58 @@ enum RouteModel {
     title: "BUP-JFP-Kakrail",
     image: "BUS_ROUTE_STD-1.png",
     start: "BUP",
-    stops_in_order: ["JFP", "Kakrail"],
+    stops_in_order: [
+      "JFP",
+      "Kakrail",
+    ],
     end: "Kakrail",
   ),
   route3(
     title: "BUP-Maghbazar-Kakrail",
     image: "BUS_ROUTE_STD-2.png",
     start: "BUP",
-    stops_in_order: ["Maghbazar", "Kakrail"],
+    stops_in_order: [
+      "Maghbazar",
+      "Kakrail",
+    ],
     end: "Kakrail",
   ),
   route4(
     title: "BUP-Shahbagh",
     image: "BUS_ROUTE_STD-3.png",
     start: "BUP",
-    stops_in_order: ["Shahbagh"],
+    stops_in_order: [
+      "Shahbagh",
+    ],
     end: "Shahbagh",
   ),
   route5(
     title: "BUP-Khamar Bari Mor",
     image: "BUS_ROUTE_STD-4.png",
     start: "BUP",
-    stops_in_order: ["Khamar Bari Mor"],
+    stops_in_order: [
+      "Khamar Bari Mor",
+    ],
     end: "Khamar Bari Mor",
   ),
   route6(
     title: "BUP-Asad Gate",
     image: "BUS_ROUTE_STD-5.png",
     start: "BUP",
-    stops_in_order: ["Asad Gate"],
+    stops_in_order: [
+      "Asad Gate",
+      "Shyamoli",
+      "Shia Moshjid",
+    ],
     end: "Asad Gate",
   ),
   route7(
     title: "BUP-City College",
     image: "BUS_ROUTE_STD-6.png",
     start: "BUP",
-    stops_in_order: ["City College"],
+    stops_in_order: [
+      "City College",
+    ],
     end: "City College",
   );
 

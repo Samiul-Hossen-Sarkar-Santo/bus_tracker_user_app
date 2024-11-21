@@ -19,11 +19,14 @@ class _RoutesState extends State<Routes> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Bus Tracker',
+          'Route Details',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.green[900],
         centerTitle: true,
+        iconTheme: const IconThemeData(
+          color: Colors.white, // Set back button color to white
+        ),
       ),
       body: widget.routeModel.image.isNotEmpty
           ? Center(
