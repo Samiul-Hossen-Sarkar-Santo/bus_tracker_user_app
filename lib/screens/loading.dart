@@ -22,7 +22,7 @@ class _LoadingScreenState extends State<LoadingScreen>
     // Initialize animation controller
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 4),
     );
 
     // Define animations
@@ -45,7 +45,7 @@ class _LoadingScreenState extends State<LoadingScreen>
     _animationController.forward();
 
     // Schedule the transition to HomeScreen
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 4), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),
@@ -88,7 +88,7 @@ class _LoadingScreenState extends State<LoadingScreen>
             child: ScaleTransition(
               scale: _scaleAnimation,
               child: Image.asset(
-                'assets/images/BUP.png',
+                'assets/images/BUP_BUS_TRACKER_LOGO.png',
                 width: 150.0,
                 height: 150.0,
               ),
