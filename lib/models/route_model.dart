@@ -102,8 +102,8 @@ enum RouteModel {
     end: "Khamar Bari Mor",
   ),
   route6(
-    title: "BUP-City College",
-    image: "BUS_ROUTE_STD-0.png",
+    title: "BUP-Asad Gate",
+    image: "BUS_ROUTE_STD-5.png",
     start: "BUP",
     stops_in_order: [
       "Mirpur 12",
@@ -118,20 +118,17 @@ enum RouteModel {
       "Technical",
       "Kallyanpur",
       "Shamoli",
-      "Asad Gate",
+      "RMS&C",
       "College Gate",
-      "Genetic Plaza",
-      "Agora",
-      "Sankar",
-      "Dhanmondi 15 No Road",
-      "Dhanmondi 8 No Road",
-      "RGB 8 No Gate"
+      "Shia Moshjid",
+      "Shuchona Center",
+      "Adabor Thana",
     ],
-    end: "City College",
+    end: "ASAD Gate",
   ),
   route7(
     title: "BUP-City College",
-    image: "BUS_ROUTE_STD-7.png",
+    image: "BUS_ROUTE_STD-6.png",
     start: "BUP",
     stops_in_order: [
       "Mirpur 12",
