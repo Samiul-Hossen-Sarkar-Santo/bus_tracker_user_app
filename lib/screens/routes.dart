@@ -1,5 +1,7 @@
 import 'package:bus_tracker_user_app/models/route_model.dart';
+import 'package:bus_tracker_user_app/screens/map_page.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Routes extends StatefulWidget {
   const Routes({
@@ -127,6 +129,30 @@ class _RoutesState extends State<Routes> {
                   // View on Map Button
                   ElevatedButton.icon(
                     onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MapPage(
+                            busId: 'busID1', // Pass the specific busId
+                            routePoints: [
+                              // Pass the list of route coordinates
+                              const LatLng(
+                                  23.75754305364988, 90.33802376263695),
+                              const LatLng(
+                                  23.84019249491988, 90.35763275860518),
+                              // Add more route points here
+                            ],
+                            stoppagePoints: [
+                              // Pass the list of stoppage coordinates
+                              const LatLng(
+                                  23.75754305364988, 90.33802376263695),
+                              const LatLng(
+                                  23.84019249491988, 90.35763275860518),
+                            ],
+                          ),
+                        ),
+                      );
+
                       // Navigate to the map page
                       //Navigator.pushNamed(context, '/mapPage');
                       print("tapped on view on map button");
