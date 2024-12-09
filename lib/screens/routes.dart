@@ -1,7 +1,7 @@
 import 'package:bus_tracker_user_app/models/route_model.dart';
 import 'package:bus_tracker_user_app/screens/map_page.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+//import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Routes extends StatefulWidget {
   const Routes({
@@ -107,68 +107,65 @@ class _RoutesState extends State<Routes> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   // Bus Status Button
-                  ElevatedButton(
-                    onPressed: () {
-                      // Handle bus status action here
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green[900],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    child: const Text(
-                      'Bus Status: On-Route',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Handle bus status action here
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green[900],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        child: const Text(
+                          'Bus Status: On-Route',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
                   ),
 
-                  // View on Map Button
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MapPage(
-                            busId: 'busID1', // Pass the specific busId
-                            routePoints: [
-                              // Pass the list of route coordinates
-                              const LatLng(
-                                  23.75754305364988, 90.33802376263695),
-                              const LatLng(
-                                  23.84019249491988, 90.35763275860518),
-                              // Add more route points here
-                            ],
-                            stoppagePoints: [
-                              // Pass the list of stoppage coordinates
-                              const LatLng(
-                                  23.75754305364988, 90.33802376263695),
-                              const LatLng(
-                                  23.84019249491988, 90.35763275860518),
-                            ],
-                          ),
-                        ),
-                      );
+                  const SizedBox(
+                    width: 2,
+                  ),
 
-                      // Navigate to the map page
-                      //Navigator.pushNamed(context, '/mapPage');
-                      print("tapped on view on map button");
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[800],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                  // View on Map Button
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MapPage(
+                              busId: widget
+                                  .routeModel.busId, // Pass the specific busId
+                            ),
+                          ),
+                        );
+
+                        // Navigate to the map page
+                        //Navigator.pushNamed(context, '/mapPage');
+                        print("tapped on view on map button");
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue[800],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
                       ),
-                    ),
-                    icon: Icon(Icons.map, color: Colors.yellow[500]),
-                    label: Text(
-                      'View on Map',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.yellow[500],
+                      icon: Icon(Icons.map, color: Colors.yellow[500]),
+                      label: Text(
+                        'View on Map',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.yellow[500],
+                        ),
                       ),
                     ),
                   ),

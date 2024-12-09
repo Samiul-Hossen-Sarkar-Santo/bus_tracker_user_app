@@ -6,6 +6,7 @@
 
 
     <application
+        android:usesCleartextTraffic="true"
         android:label="BUP Bus Tracker"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">

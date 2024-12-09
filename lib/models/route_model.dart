@@ -1,6 +1,7 @@
 enum RouteModel {
   route1(
     title: "BUP-Uttara",
+    busId: "busID1",
     image: "BUS_ROUTE_STD-0.png",
     start: "BUP",
     stops_in_order: [
@@ -18,6 +19,7 @@ enum RouteModel {
   ),
   route2(
     title: "BUP-JFP-Kakrail",
+    busId: "busID2",
     image: "BUS_ROUTE_STD-1.png",
     start: "BUP",
     stops_in_order: [
@@ -41,6 +43,7 @@ enum RouteModel {
   ),
   route3(
     title: "BUP-Maghbazar-Kakrail",
+    busId: "busID3",
     image: "BUS_ROUTE_STD-2.png",
     start: "BUP",
     stops_in_order: [
@@ -60,6 +63,7 @@ enum RouteModel {
   ),
   route4(
     title: "BUP-Shahbagh",
+    busId: "busID4",
     image: "BUS_ROUTE_STD-3.png",
     start: "BUP",
     stops_in_order: [
@@ -85,6 +89,7 @@ enum RouteModel {
   ),
   route5(
     title: "BUP-Khamar Bari Mor",
+    busId: "busID5",
     image: "BUS_ROUTE_STD-4.png",
     start: "BUP",
     stops_in_order: [
@@ -103,6 +108,7 @@ enum RouteModel {
   ),
   route6(
     title: "BUP-Asad Gate",
+    busId: "busID6",
     image: "BUS_ROUTE_STD-5.png",
     start: "BUP",
     stops_in_order: [
@@ -128,6 +134,7 @@ enum RouteModel {
   ),
   route7(
     title: "BUP-City College",
+    busId: "busID7",
     image: "BUS_ROUTE_STD-6.png",
     start: "BUP",
     stops_in_order: [
@@ -157,6 +164,7 @@ enum RouteModel {
 
   const RouteModel({
     required this.title,
+    required this.busId,
     required this.image,
     required this.start,
     required this.stops_in_order,
@@ -164,6 +172,7 @@ enum RouteModel {
   });
 
   final String title;
+  final String busId;
   final String image;
   final String start;
   final List<String> stops_in_order; // Changed this to a List of Strings
