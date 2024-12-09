@@ -83,6 +83,7 @@ class _MapPageState extends State<MapPage> {
           print("Updated location: $_currentLocation");
 
           // Automatically move the camera to the new location
+          // ignore: unnecessary_null_comparison
           if (_mapController != null) {
             _mapController.animateCamera(
               CameraUpdate.newLatLng(
