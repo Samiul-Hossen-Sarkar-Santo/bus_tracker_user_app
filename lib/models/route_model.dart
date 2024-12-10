@@ -1,3 +1,5 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 enum RouteModel {
   route1(
     title: "BUP-Uttara",
@@ -15,7 +17,18 @@ enum RouteModel {
       "Airport",
       "Jashimuddin",
       "Rajlakkhi",
-      "Ajamper"
+      "Ajamper",
+    ],
+    routeCoordinatesInOrder: [
+      LatLng(23.822955316790996, 90.37755673952572), // Kalshi
+      LatLng(23.824020884508187, 90.3934177383597), // ECB
+      LatLng(23.819216029533838, 90.41540465404796), // Shewra
+      LatLng(23.82969007919262, 90.41997879904667), // Khilkhet
+      LatLng(23.846703288899867, 90.41617172418385), // Kawla
+      LatLng(23.84551477473964, 90.40292519850567), // Airport
+      LatLng(23.861448009381977, 90.39564033767748), // Jashimuddin
+      LatLng(23.861448009381977, 90.39564033767748), // Rajlakkhi
+      LatLng(23.864479143183488, 90.40807594932116), // Ajamper
     ],
     end: "House Building",
     endLat: 23.87465207023296,
@@ -43,7 +56,24 @@ enum RouteModel {
       "Rampura Bazar",
       "Abul Hotel",
       "Malibag Railgate",
-      "Mouchak"
+      "Mouchak",
+    ],
+    routeCoordinatesInOrder: [
+      LatLng(23.837389437055908, 90.36608061180581), // DOHS
+      LatLng(23.830155835473633, 90.3765058676261), // ECB Canteen
+      LatLng(23.823096030062512, 90.39419963167853), // ECB Chattar
+      LatLng(23.819216029533838, 90.41540465404796), // Shewra
+      LatLng(23.740172619169247, 90.42824003767369), // Bisso Road
+      LatLng(23.81364710547437, 90.42424175326649), // JFP
+      LatLng(23.79188797241111, 90.42462051549465), // Shahjadpur
+      LatLng(23.784674140333053, 90.42587637237216), // Uttar Badda
+      LatLng(23.780917472495172, 90.42112326651055), // Gulshan Link Road
+      LatLng(23.779824706540822, 90.4237139117577), // Middle Badda
+      LatLng(23.7682103049537, 90.42317510883893), // Rampura Bridge
+      LatLng(23.760886627098355, 90.41898212254007), // Rampura Bazar
+      LatLng(23.755544078400266, 90.41524848363444), // Abul Hotel
+      LatLng(23.75029851837673, 90.41302899137293), // Malibag Railgate
+      LatLng(23.74641911751909, 90.41187020831205), // Mouchak
     ],
     end: "Kakrail",
     endLat: 23.737308754695302,
@@ -67,7 +97,20 @@ enum RouteModel {
       "Nabisco",
       "Sat Rasta",
       "Hatirjheel",
-      "Maghbazar"
+      "Maghbazar",
+    ],
+    routeCoordinatesInOrder: [
+      LatLng(23.837389437055908, 90.36608061180581),
+      LatLng(23.830155835473633, 90.3765058676261),
+      LatLng(23.823096030062512, 90.39419963167853),
+      LatLng(23.80376570930915, 90.40601671648612),
+      LatLng(23.79599072491251, 90.40082388793944),
+      LatLng(23.78870725753446, 90.4000011953465),
+      LatLng(23.77192105584532, 90.40106537815393),
+      LatLng(23.769802002618185, 90.40119855136194),
+      LatLng(23.75759124323348, 90.39889324931787),
+      LatLng(23.76525318132423, 90.4123214448155),
+      LatLng(23.748450754938496, 90.40268778138497),
     ],
     end: "Maghbazar",
     endLat: 23.748872039981663,
@@ -97,7 +140,26 @@ enum RouteModel {
       "Bijoy Sarani",
       "Farmgate",
       "Karwan Bazar",
-      "Bangla Motor"
+      "Bangla Motor",
+    ],
+    routeCoordinatesInOrder: [
+      LatLng(23.837389437055908, 90.36608061180581),
+      LatLng(23.830155835473633, 90.3765058676261),
+      LatLng(23.82192970465969, 90.37771935440745),
+      LatLng(23.823096030062512, 90.39419963167853),
+      LatLng(23.820662421299698, 90.39046703767615),
+      LatLng(23.816228021404065, 90.40415301621678),
+      LatLng(23.813558341007067, 90.39829575116906),
+      LatLng(23.83000242486954, 90.38837215176032),
+      LatLng(23.805100330760137, 90.39609684779039),
+      LatLng(23.80353248503173, 90.39343611295945),
+      LatLng(23.7947677651623, 90.3932439953467),
+      LatLng(23.7784944847623, 90.4057266145954),
+      LatLng(23.775427509019135, 90.38967272260565),
+      LatLng(23.765064279726612, 90.38612573767449),
+      LatLng(23.75886383790603, 90.3898063953456),
+      LatLng(23.751133197438225, 90.39270588000275),
+      LatLng(23.745943114445428, 90.39481449904414),
     ],
     end: "Shahbagh",
     endLat: 23.738106930210062,
@@ -122,10 +184,23 @@ enum RouteModel {
       "Krishi University",
       "Chandrima Uddan"
     ],
+    routeCoordinatesInOrder: [
+      LatLng(23.828898622365294, 90.36433534898919), // Mirpur 12
+      LatLng(23.82450543703228, 90.36437900329229), // Mirpur 11.5
+      LatLng(23.81860252691158, 90.36697822674736), // Mirpur 11
+      LatLng(23.804599549010902, 90.37380241139809), // Mirpur 10
+      LatLng(23.80001142428453, 90.37176789534682), // Kazipara
+      LatLng(23.791012472863233, 90.37567151068914), // Shewrapara
+      LatLng(23.785246586805254, 90.37788032644607), // Taltola
+      LatLng(23.777566693348877, 90.38026955069353), // Agargaon
+      LatLng(24.720021322189424, 90.42676887246922), // Krishi University
+      LatLng(23.76561996438381, 90.38311613720279), // Chandrima Uddan
+    ],
     end: "Khamar Bari Mor",
     endLat: 23.758880509925685,
     endLong: 90.38369216231428,
   ),
+
   route6(
     title: "BUP-Asad Gate",
     busId: "busID6",
@@ -150,12 +225,32 @@ enum RouteModel {
       "College Gate",
       "Shia Moshjid",
       "Shuchona Center",
-      "Adabor Thana",
+      "Adabor Thana"
+    ],
+    routeCoordinatesInOrder: [
+      LatLng(23.828898622365294, 90.36433534898919), // Mirpur 12
+      LatLng(23.82450543703228, 90.36437900329229), // Mirpur 11.5
+      LatLng(23.81860252691158, 90.36697822674736), // Mirpur 11
+      LatLng(23.80976090880386, 90.36061568000457), // Proshika
+      LatLng(23.807290912726415, 90.35464526651138), // Commerce College
+      LatLng(23.79998987037693, 90.35487926859835), // Sony Hall
+      LatLng(23.79566184237608, 90.35325756194035), // Mirpur 01
+      LatLng(23.791327706565657, 90.35422983767526), // Ansar Camp
+      LatLng(23.784842683585428, 90.35251449534634), // Bangla College
+      LatLng(23.781494797176006, 90.35247157974737), // Technical
+      LatLng(23.77831238547684, 90.36117189534615), // Kallyanpur
+      LatLng(23.774820158262894, 90.36546078767482), // Shamoli
+      LatLng(23.869821178731023, 90.39971535634918), // RMS&C
+      LatLng(23.76824603842149, 90.36916972597055), // College Gate
+      LatLng(23.762509245181384, 90.35908772418136), // Shia Moshjid
+      LatLng(23.767388450326315, 90.35888092418148), // Shuchona Center
+      LatLng(23.771354645691577, 90.3590806454307), // Adabor Thana
     ],
     end: "Asad Gate",
     endLat: 23.76011652262059,
     endLong: 90.37288520405924,
   ),
+
   route7(
     title: "BUP-City College",
     busId: "busID7",
@@ -185,6 +280,28 @@ enum RouteModel {
       "Dhanmondi 8 No Road",
       "RGB & No Gate"
     ],
+    routeCoordinatesInOrder: [
+      LatLng(23.828898622365294, 90.36433534898919), // Mirpur 12
+      LatLng(23.82450543703228, 90.36437900329229), // Mirpur 11.5
+      LatLng(23.81860252691158, 90.36697822674736), // Mirpur 11
+      LatLng(23.80976090880386, 90.36061568000457), // Proshika
+      LatLng(23.807290912726415, 90.35464526651138), // Commerce College
+      LatLng(23.79998987037693, 90.35487926859835), // Sony Hall
+      LatLng(23.79566184237608, 90.35325756194035), // Mirpur 01
+      LatLng(23.791327706565657, 90.35422983767526), // Ansar Camp
+      LatLng(23.784842683585428, 90.35251449534634), // Bangla College
+      LatLng(23.781494797176006, 90.35247157974737), // Technical
+      LatLng(23.77831238547684, 90.36117189534615), // Kallyanpur
+      LatLng(23.774820158262894, 90.36546078767482), // Shamoli
+      LatLng(23.760756495511984, 90.37292744206489), // Asad Gate
+      LatLng(23.76824603842149, 90.36916972597055), // College Gate
+      LatLng(23.755751893538253, 90.37312448000291), // Genetic Plaza
+      LatLng(23.740042506398567, 90.37501625540348), // Agora
+      LatLng(23.75101940282221, 90.36819696466021), // Sankar
+      LatLng(23.744744029380264, 90.37252198000262), // Dhanmondi 15 No Road
+      LatLng(23.746025727736527, 90.38097265116696), // Dhanmondi 8 No Road
+      LatLng(23.739122866135798, 90.37636304528047), // RGB & No Gate
+    ],
     end: "City College",
     endLat: 23.739079042145477,
     endLong: 90.38338455092443,
@@ -198,6 +315,7 @@ enum RouteModel {
     required this.startLat,
     required this.startLong,
     required this.stopsInOrder,
+    required this.routeCoordinatesInOrder,
     required this.end,
     required this.endLat,
     required this.endLong,
@@ -210,6 +328,7 @@ enum RouteModel {
   final double startLat;
   final double startLong;
   final List<String> stopsInOrder;
+  final List<LatLng> routeCoordinatesInOrder;
   final String end;
   final double endLat;
   final double endLong;
