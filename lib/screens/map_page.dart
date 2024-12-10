@@ -1,16 +1,15 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:location/location.dart';
+import 'package:http/http.dart' as http;
 import 'package:bus_tracker_user_app/models/route_model.dart';
 
 class MapPage extends StatefulWidget {
   final String busId;
 
-  const MapPage({
-    super.key,
-    required this.busId,
-  });
+  const MapPage({super.key, required this.busId});
 
   @override
   _MapPageState createState() => _MapPageState();
@@ -25,12 +24,14 @@ class _MapPageState extends State<MapPage> {
 
   Map<String, dynamic>? _currentLocation;
   late GoogleMapController _mapController;
-
+  final Set<Polyline> _polylines = {}; // To hold the polyline(s)
   late LatLng _startPoint;
   late LatLng _endPoint;
-
   late Location _location;
   LatLng? _userLocation;
+
+  int _selectedRouteIndex = 0;
+  final List<List<LatLng>> _allRoutes = [];
 
   @override
   void initState() {
@@ -38,6 +39,7 @@ class _MapPageState extends State<MapPage> {
     _initializeRouteCoordinates();
     _listenToBusLocation(); // Start listening for updates when the widget initializes
     _getUserLocation(); // Fetch user's current location
+    _getRoutes(); // Fetch polyline from the Directions API
   }
 
   // Initialize the start and end points based on the bus route
@@ -76,6 +78,94 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
+  // Fetch route polyline using Google Maps Directions API
+  Future<void> _getRoutes() async {
+    final url =
+        'https://maps.googleapis.com/maps/api/directions/json?origin=${_startPoint.latitude},${_startPoint.longitude}&destination=${_endPoint.latitude},${_endPoint.longitude}&alternatives=true&key=AIzaSyBPG9_0-rQAXGWv3zfvooLT-M238Rop9wQ';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == 'OK') {
+        final routes = data['routes'];
+        for (var route in routes) {
+          final points = _decodePolyline(route['overview_polyline']['points']);
+          _allRoutes.add(points);
+        }
+        _highlightRoutes();
+      } else {
+        print("Error fetching directions: ${data['status']}");
+      }
+    } else {
+      print("Failed to fetch directions. Status code: ${response.statusCode}");
+    }
+  }
+
+  void _highlightRoutes() {
+    setState(() {
+      _polylines.clear();
+      for (int i = 0; i < _allRoutes.length; i++) {
+        _polylines.add(
+          Polyline(
+            polylineId: PolylineId('route_$i'),
+            points: _allRoutes[i],
+            color: i == _selectedRouteIndex ? Colors.blue : Colors.grey,
+            width: i == _selectedRouteIndex ? 6 : 3,
+          ),
+        );
+      }
+    });
+  }
+
+  void _onRouteTapped(int index) {
+    setState(() {
+      _selectedRouteIndex = index;
+    });
+    _highlightRoutes();
+  }
+
+  // Decode polyline points from the Directions API
+  List<LatLng> _decodePolyline(String encodedPolyline) {
+    List<LatLng> polylinePoints = [];
+    int index = 0;
+    int len = encodedPolyline.length;
+    int lat = 0;
+    int lng = 0;
+
+    while (index < len) {
+      int shift = 0;
+      int result = 0;
+      int byte;
+
+      do {
+        byte = encodedPolyline.codeUnitAt(index) - 63;
+        result |= (byte & 0x1f) << shift;
+        shift += 5;
+        index++;
+      } while (byte >= 0x20);
+
+      int dlat = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
+      lat += dlat;
+
+      shift = 0;
+      result = 0;
+      do {
+        byte = encodedPolyline.codeUnitAt(index) - 63;
+        result |= (byte & 0x1f) << shift;
+        shift += 5;
+        index++;
+      } while (byte >= 0x20);
+
+      int dlng = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
+      lng += dlng;
+
+      polylinePoints.add(LatLng(lat / 1E5, lng / 1E5));
+    }
+
+    return polylinePoints;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,6 +191,20 @@ class _MapPageState extends State<MapPage> {
               ),
               myLocationEnabled: true,
               myLocationButtonEnabled: true,
+              polylines: _polylines,
+              onTap: (LatLng position) {
+                // Check if the tap is on a route and switch selection
+                for (int i = 0; i < _allRoutes.length; i++) {
+                  if (_allRoutes[i].contains(position)) {
+                    _onRouteTapped(i);
+                    break;
+                  }
+                }
+              },
+              onMapCreated: (controller) {
+                _mapController = controller;
+                _zoomToFit();
+              },
               markers: {
                 // Marker for the bus's current location
                 Marker(
@@ -132,10 +236,6 @@ class _MapPageState extends State<MapPage> {
                   icon: BitmapDescriptor.defaultMarkerWithHue(
                       BitmapDescriptor.hueRed),
                 ),
-              },
-              onMapCreated: (controller) {
-                _mapController = controller;
-                _zoomToFit(); // Adjust camera to show both start and end points
               },
             )
           : Padding(
