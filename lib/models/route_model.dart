@@ -4,7 +4,9 @@ enum RouteModel {
     busId: "busID1",
     image: "BUS_ROUTE_STD-0.png",
     start: "BUP",
-    stops_in_order: [
+    startLat: 23.8394494908037,
+    startLong: 90.35822879566943,
+    stopsInOrder: [
       "Kalshi",
       "ECB",
       "Shewra",
@@ -16,13 +18,17 @@ enum RouteModel {
       "Ajamper"
     ],
     end: "House Building",
+    endLat: 23.87465207023296,
+    endLong: 90.40045914907554,
   ),
   route2(
     title: "BUP-JFP-Kakrail",
     busId: "busID2",
     image: "BUS_ROUTE_STD-1.png",
     start: "BUP",
-    stops_in_order: [
+    startLat: 23.8394494908037,
+    startLong: 90.35822879566943,
+    stopsInOrder: [
       "DOHS",
       "ECB Canteen",
       "ECB Chattar",
@@ -40,13 +46,17 @@ enum RouteModel {
       "Mouchak"
     ],
     end: "Kakrail",
+    endLat: 23.737308754695302,
+    endLong: 90.4041336775186,
   ),
   route3(
     title: "BUP-Maghbazar-Kakrail",
     busId: "busID3",
     image: "BUS_ROUTE_STD-2.png",
     start: "BUP",
-    stops_in_order: [
+    startLat: 23.8394494908037,
+    startLong: 90.35822879566943,
+    stopsInOrder: [
       "DOHS",
       "ECB Canteen",
       "ECB Chattar",
@@ -59,14 +69,18 @@ enum RouteModel {
       "Hatirjheel",
       "Maghbazar"
     ],
-    end: "Kakrail",
+    end: "Maghbazar",
+    endLat: 23.748872039981663,
+    endLong: 90.4036745273261,
   ),
   route4(
     title: "BUP-Shahbagh",
     busId: "busID4",
     image: "BUS_ROUTE_STD-3.png",
     start: "BUP",
-    stops_in_order: [
+    startLat: 23.8394494908037,
+    startLong: 90.35822879566943,
+    stopsInOrder: [
       "DOHS",
       "ECB Canteen",
       "Khalsi",
@@ -86,13 +100,17 @@ enum RouteModel {
       "Bangla Motor"
     ],
     end: "Shahbagh",
+    endLat: 23.738106930210062,
+    endLong: 90.39587882926317,
   ),
   route5(
     title: "BUP-Khamar Bari Mor",
     busId: "busID5",
     image: "BUS_ROUTE_STD-4.png",
     start: "BUP",
-    stops_in_order: [
+    startLat: 23.8394494908037,
+    startLong: 90.35822879566943,
+    stopsInOrder: [
       "Mirpur 12",
       "Mirpur 11.5",
       "Mirpur 11",
@@ -105,13 +123,17 @@ enum RouteModel {
       "Chandrima Uddan"
     ],
     end: "Khamar Bari Mor",
+    endLat: 23.758880509925685,
+    endLong: 90.38369216231428,
   ),
   route6(
     title: "BUP-Asad Gate",
     busId: "busID6",
     image: "BUS_ROUTE_STD-5.png",
     start: "BUP",
-    stops_in_order: [
+    startLat: 23.8394494908037,
+    startLong: 90.35822879566943,
+    stopsInOrder: [
       "Mirpur 12",
       "Mirpur 11.5",
       "Mirpur 11",
@@ -130,14 +152,18 @@ enum RouteModel {
       "Shuchona Center",
       "Adabor Thana",
     ],
-    end: "ASAD Gate",
+    end: "Asad Gate",
+    endLat: 23.76011652262059,
+    endLong: 90.37288520405924,
   ),
   route7(
     title: "BUP-City College",
     busId: "busID7",
     image: "BUS_ROUTE_STD-6.png",
     start: "BUP",
-    stops_in_order: [
+    startLat: 23.8394494908037,
+    startLong: 90.35822879566943,
+    stopsInOrder: [
       "Mirpur 12",
       "Mirpur 11.5",
       "Mirpur 11",
@@ -160,6 +186,8 @@ enum RouteModel {
       "RGB & No Gate"
     ],
     end: "City College",
+    endLat: 23.739079042145477,
+    endLong: 90.38338455092443,
   );
 
   const RouteModel({
@@ -167,14 +195,22 @@ enum RouteModel {
     required this.busId,
     required this.image,
     required this.start,
-    required this.stops_in_order,
+    required this.startLat,
+    required this.startLong,
+    required this.stopsInOrder,
     required this.end,
+    required this.endLat,
+    required this.endLong,
   });
 
   final String title;
   final String busId;
   final String image;
   final String start;
-  final List<String> stops_in_order; // Changed this to a List of Strings
+  final double startLat;
+  final double startLong;
+  final List<String> stopsInOrder;
   final String end;
+  final double endLat;
+  final double endLong;
 }

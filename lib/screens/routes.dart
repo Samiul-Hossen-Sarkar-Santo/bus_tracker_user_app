@@ -58,12 +58,9 @@ class _RoutesState extends State<Routes> {
                           'Route Image',
                           style: TextStyle(
                             color: Colors.green[900],
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w900,
                             fontSize: 24,
                           ),
-                        ),
-                        const SizedBox(
-                          height: 10,
                         ),
                         Expanded(
                           child: InteractiveViewer(
@@ -88,7 +85,7 @@ class _RoutesState extends State<Routes> {
                     )
                   : const Center(
                       child: Text(
-                        "No image provided",
+                        "Image not found!!!",
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.grey,
@@ -102,39 +99,12 @@ class _RoutesState extends State<Routes> {
           Expanded(
             flex: 1,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 30.0,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  // Bus Status Button
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Handle bus status action here
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green[900],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ),
-                        child: const Text(
-                          'Bus Status: On-Route',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(
-                    width: 2,
-                  ),
-
                   // View on Map Button
                   Expanded(
                     child: ElevatedButton.icon(
@@ -148,13 +118,10 @@ class _RoutesState extends State<Routes> {
                             ),
                           ),
                         );
-
-                        // Navigate to the map page
-                        //Navigator.pushNamed(context, '/mapPage');
                         print("tapped on view on map button");
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue[800],
+                        backgroundColor: Colors.green[800],
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -163,7 +130,7 @@ class _RoutesState extends State<Routes> {
                       label: Text(
                         'View on Map',
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: 20,
                           color: Colors.yellow[500],
                         ),
                       ),
@@ -172,6 +139,9 @@ class _RoutesState extends State<Routes> {
                 ],
               ),
             ),
+          ),
+          const SizedBox(
+            height: 15,
           ),
         ],
       ),

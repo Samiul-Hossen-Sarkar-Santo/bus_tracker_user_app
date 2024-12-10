@@ -32,7 +32,7 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {
       filteredRoutes = allRoutes.where((route) {
         // Check if any stoppage in the route matches the query
-        return route.stops_in_order.any((stop) {
+        return route.stopsInOrder.any((stop) {
               return stop.toLowerCase().contains(lowercasedQuery);
             }) ||
             route.title

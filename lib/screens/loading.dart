@@ -26,11 +26,11 @@ class _LoadingScreenState extends State<LoadingScreen>
     );
 
     // Define animations
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.2).animate(
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.5).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.8).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
     );
 
@@ -89,8 +89,8 @@ class _LoadingScreenState extends State<LoadingScreen>
               scale: _scaleAnimation,
               child: Image.asset(
                 'assets/images/BUP_BUS_TRACKER_LOGO.png',
-                width: 150.0,
-                height: 150.0,
+                width: 180.0,
+                height: 180.0,
               ),
             ),
           ),

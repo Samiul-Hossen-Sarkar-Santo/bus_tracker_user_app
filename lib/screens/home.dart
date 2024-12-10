@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final filteredRoutes = RouteModel.values.where((route) {
       return searchQuery.isEmpty ||
           route.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
-          route.stops_in_order.any(
+          route.stopsInOrder.any(
               (stop) => stop.toLowerCase().contains(searchQuery.toLowerCase()));
     }).toList();
 
