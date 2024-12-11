@@ -6,8 +6,8 @@ enum RouteModel {
     busId: "busID1",
     image: "BUS_ROUTE_STD-0.png",
     start: "BUP",
-    startLat: 23.8394494908037,
-    startLong: 90.35822879566943,
+    startLat: 23.83944781693273,
+    startLong: 90.35820879403578,
     stopsInOrder: [
       "Kalshi",
       "ECB",
@@ -39,8 +39,8 @@ enum RouteModel {
     busId: "busID2",
     image: "BUS_ROUTE_STD-1.png",
     start: "BUP",
-    startLat: 23.8394494908037,
-    startLong: 90.35822879566943,
+    startLat: 23.83944781693273,
+    startLong: 90.35820879403578,
     stopsInOrder: [
       "DOHS",
       "ECB Canteen",
@@ -84,8 +84,8 @@ enum RouteModel {
     busId: "busID3",
     image: "BUS_ROUTE_STD-2.png",
     start: "BUP",
-    startLat: 23.8394494908037,
-    startLong: 90.35822879566943,
+    startLat: 23.83944781693273,
+    startLong: 90.35820879403578,
     stopsInOrder: [
       "DOHS",
       "ECB Canteen",
@@ -121,8 +121,8 @@ enum RouteModel {
     busId: "busID4",
     image: "BUS_ROUTE_STD-3.png",
     start: "BUP",
-    startLat: 23.8394494908037,
-    startLong: 90.35822879566943,
+    startLat: 23.83944781693273,
+    startLong: 90.35820879403578,
     stopsInOrder: [
       "DOHS",
       "ECB Canteen",
@@ -170,8 +170,8 @@ enum RouteModel {
     busId: "busID5",
     image: "BUS_ROUTE_STD-4.png",
     start: "BUP",
-    startLat: 23.8394494908037,
-    startLong: 90.35822879566943,
+    startLat: 23.83944781693273,
+    startLong: 90.35820879403578,
     stopsInOrder: [
       "Mirpur 12",
       "Mirpur 11.5",
@@ -185,6 +185,10 @@ enum RouteModel {
       "Chandrima Uddan"
     ],
     routeCoordinatesInOrder: [
+      LatLng(23.83944781693273, 90.35820879403578), // BUP In Gate
+      LatLng(23.834961899131887, 90.35881453781377), // DSCSC
+      LatLng(23.831960189009205, 90.36158785487743), // DSCSC Mosque
+      LatLng(23.831993428090584, 90.3636712000425), // NDC
       LatLng(23.828898622365294, 90.36433534898919), // Mirpur 12
       LatLng(23.82450543703228, 90.36437900329229), // Mirpur 11.5
       LatLng(23.81860252691158, 90.36697822674736), // Mirpur 11
@@ -193,7 +197,7 @@ enum RouteModel {
       LatLng(23.791012472863233, 90.37567151068914), // Shewrapara
       LatLng(23.785246586805254, 90.37788032644607), // Taltola
       LatLng(23.777566693348877, 90.38026955069353), // Agargaon
-      LatLng(24.720021322189424, 90.42676887246922), // Krishi University
+      //LatLng(24.720021322189424, 90.42676887246922), // Krishi University
       LatLng(23.76561996438381, 90.38311613720279), // Chandrima Uddan
     ],
     end: "Khamar Bari Mor",
@@ -206,8 +210,8 @@ enum RouteModel {
     busId: "busID6",
     image: "BUS_ROUTE_STD-5.png",
     start: "BUP",
-    startLat: 23.8394494908037,
-    startLong: 90.35822879566943,
+    startLat: 23.83944781693273,
+    startLong: 90.35820879403578,
     stopsInOrder: [
       "Mirpur 12",
       "Mirpur 11.5",
@@ -228,27 +232,37 @@ enum RouteModel {
       "Adabor Thana"
     ],
     routeCoordinatesInOrder: [
-      LatLng(23.828898622365294, 90.36433534898919), // Mirpur 12
+      LatLng(23.83944781693273, 90.35820879403578), // BUP In Gate
+      LatLng(23.834961899131887, 90.35881453781377), // DSCSC
+      LatLng(23.831960189009205, 90.36158785487743), // DSCSC Mosque
+      LatLng(23.831993428090584, 90.3636712000425), // NDC
       LatLng(23.82450543703228, 90.36437900329229), // Mirpur 11.5
-      LatLng(23.81860252691158, 90.36697822674736), // Mirpur 11
-      LatLng(23.80976090880386, 90.36061568000457), // Proshika
-      LatLng(23.807290912726415, 90.35464526651138), // Commerce College
-      LatLng(23.79998987037693, 90.35487926859835), // Sony Hall
-      LatLng(23.79566184237608, 90.35325756194035), // Mirpur 01
-      LatLng(23.791327706565657, 90.35422983767526), // Ansar Camp
-      LatLng(23.784842683585428, 90.35251449534634), // Bangla College
-      LatLng(23.781494797176006, 90.35247157974737), // Technical
-      LatLng(23.77831238547684, 90.36117189534615), // Kallyanpur
-      LatLng(23.774820158262894, 90.36546078767482), // Shamoli
-      LatLng(23.869821178731023, 90.39971535634918), // RMS&C
-      LatLng(23.76824603842149, 90.36916972597055), // College Gate
-      LatLng(23.762509245181384, 90.35908772418136), // Shia Moshjid
-      LatLng(23.767388450326315, 90.35888092418148), // Shuchona Center
-      LatLng(23.771354645691577, 90.3590806454307), // Adabor Thana
+      LatLng(23.81575733203357, 90.36609331950163), // Mirpur 11/Milk-vita Road
+      LatLng(23.81497659913363, 90.36272507856626), // Spartan Fitness
+      LatLng(23.811432855624155, 90.36078667427861), // Nishat Bike Zone
+      LatLng(23.809448679628332, 90.36116408985072), // Proshika
+      LatLng(23.806011086470996, 90.35154979834113), // Commerce College
+      LatLng(23.805125077616925, 90.35166838227215), // Commerce College mor
+      LatLng(23.79997655599662, 90.3552123423596), // Sony Hall
+      LatLng(23.798556103428073, 90.35323394679146), // Mirpur 01
+      LatLng(23.785152440899125, 90.35384335041337), // Bangla College
+      LatLng(23.781608038156982, 90.35178387650694), // Technical
+      LatLng(23.781608038156982, 90.35178387650694), // Khalek Pump
+      LatLng(23.778576577725726, 90.35992558588298), // Kallyanpur
+      LatLng(23.773371725590795, 90.36720947907511), // Shishu Mela
+      LatLng(23.76805928059568, 90.36928405313525), // College Gate
+      LatLng(23.766592534981903, 90.36471550634664), // Camp
+      LatLng(23.764297102547562, 90.36547849220003), // Tajmohol Road
+      LatLng(23.762417539817875, 90.3588409967391), // Shia Moshjid
+      LatLng(23.767450168551715, 90.35840866000913), // Shuchona Center
+      LatLng(23.76931748386433, 90.3585873725444), // Shahabuddin Plaza
+      LatLng(23.770513773002293, 90.35908612170924), // Adabor Thana
+      LatLng(23.773386289116733, 90.36109877221789), // Shompa Market
+      LatLng(23.774885890029985, 90.3655158643938), // Shamoli
     ],
-    end: "Asad Gate",
-    endLat: 23.76011652262059,
-    endLong: 90.37288520405924,
+    end: "Shia Moshjid",
+    endLat: 23.762417539817875,
+    endLong: 90.3588409967391,
   ),
 
   route7(
@@ -256,8 +270,8 @@ enum RouteModel {
     busId: "busID7",
     image: "BUS_ROUTE_STD-6.png",
     start: "BUP",
-    startLat: 23.8394494908037,
-    startLong: 90.35822879566943,
+    startLat: 23.83944781693273,
+    startLong: 90.35820879403578,
     stopsInOrder: [
       "Mirpur 12",
       "Mirpur 11.5",

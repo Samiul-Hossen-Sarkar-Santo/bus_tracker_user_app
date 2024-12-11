@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_routes/google_maps_routes.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:location/location.dart';
 import 'package:bus_tracker_user_app/models/route_model.dart';
@@ -26,9 +25,14 @@ class _MapPageState extends State<MapPage> {
 
   Map<String, dynamic>? _currentLocation;
   late GoogleMapController _mapController;
-  MapsRoutes routes = MapsRoutes();
 
-  late List<LatLng> points;
+  BitmapDescriptor busMarker = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor bupMarker = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor endMarker = BitmapDescriptor.defaultMarker;
+
+  late List<LatLng> points = [];
+
+  String busName = "";
 
   late LatLng _startPoint;
   late LatLng _endPoint;
@@ -39,9 +43,34 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
+    addCustomIcon();
     _initializeRouteCoordinates();
-    _listenToBusLocation(); // Start listening for updates when the widget initializes
-    _getUserLocation(); // Fetch user's current location
+    _listenToBusLocation();
+    _getUserLocation();
+  }
+
+  void addCustomIcon() {
+    BitmapDescriptor.asset(
+            const ImageConfiguration(), "assets/images/Bus_marker.png")
+        .then((Icon) {
+      setState(() {
+        busMarker = Icon;
+      });
+    });
+    BitmapDescriptor.asset(
+            const ImageConfiguration(), "assets/images/BUP_marker.png")
+        .then((Icon) {
+      setState(() {
+        bupMarker = Icon;
+      });
+    });
+    BitmapDescriptor.asset(
+            const ImageConfiguration(), "assets/images/End_marker.png")
+        .then((Icon) {
+      setState(() {
+        endMarker = Icon;
+      });
+    });
   }
 
   // Initialize the start and end points based on the bus route
@@ -50,97 +79,12 @@ class _MapPageState extends State<MapPage> {
         RouteModel.values.firstWhere((route) => route.busId == widget.busId);
 
     // Set start and end points based on the route
-    _startPoint = const LatLng(23.8394494908037, 90.35822879566943); // BUP
-
-    // Set the end point coordinates dynamically based on the route
-    switch (route.end) {
-      case 'House Building':
-        _endPoint = const LatLng(23.87465207023296, 90.40045914907554);
-        points = route.routeCoordinatesInOrder;
-        try {
-          await routes.drawRoute(points, route.title, Colors.blue[400]!,
-              "AIzaSyBPG9_0-rQAXGWv3zfvooLT-M238Rop9wQ");
-          setState(() {});
-        } catch (e) {
-          print("Error drawing route: $e");
-        }
-
-        break;
-      case 'Kakrail':
-        _endPoint = const LatLng(23.737308754695302, 90.4041336775186);
-        points = route.routeCoordinatesInOrder;
-        try {
-          await routes.drawRoute(points, route.title, Colors.blue[400]!,
-              "AIzaSyBPG9_0-rQAXGWv3zfvooLT-M238Rop9wQ");
-          setState(() {});
-        } catch (e) {
-          print("Error drawing route: $e");
-        }
-
-        break;
-      case 'Maghbazar':
-        _endPoint = const LatLng(23.748872039981663, 90.4036745273261);
-        points = route.routeCoordinatesInOrder;
-        try {
-          await routes.drawRoute(points, route.title, Colors.blue[400]!,
-              "AIzaSyBPG9_0-rQAXGWv3zfvooLT-M238Rop9wQ");
-          setState(() {});
-        } catch (e) {
-          print("Error drawing route: $e");
-        }
-
-        break;
-      case 'Shahbagh':
-        _endPoint = const LatLng(23.738106930210062, 90.39587882926317);
-        points = route.routeCoordinatesInOrder;
-        try {
-          await routes.drawRoute(points, route.title, Colors.blue[400]!,
-              "AIzaSyBPG9_0-rQAXGWv3zfvooLT-M238Rop9wQ");
-          setState(() {});
-        } catch (e) {
-          print("Error drawing route: $e");
-        }
-
-        break;
-      case 'Khamar Bari Mor':
-        _endPoint = const LatLng(23.758880509925685, 90.38369216231428);
-        points = route.routeCoordinatesInOrder;
-        try {
-          await routes.drawRoute(points, route.title, Colors.blue[400]!,
-              "AIzaSyBPG9_0-rQAXGWv3zfvooLT-M238Rop9wQ");
-          setState(() {});
-        } catch (e) {
-          print("Error drawing route: $e");
-        }
-
-        break;
-      case 'Asad Gate':
-        _endPoint = const LatLng(23.76011652262059, 90.37288520405924);
-        points = route.routeCoordinatesInOrder;
-        try {
-          await routes.drawRoute(points, route.title, Colors.blue[400]!,
-              "AIzaSyBPG9_0-rQAXGWv3zfvooLT-M238Rop9wQ");
-          setState(() {});
-        } catch (e) {
-          print("Error drawing route: $e");
-        }
-
-        break;
-      case 'City College':
-        _endPoint = const LatLng(23.739079042145477, 90.38338455092443);
-        points = route.routeCoordinatesInOrder;
-        try {
-          await routes.drawRoute(points, route.title, Colors.blue[400]!,
-              "AIzaSyBPG9_0-rQAXGWv3zfvooLT-M238Rop9wQ");
-          setState(() {});
-        } catch (e) {
-          print("Error drawing route: $e");
-        }
-
-        break;
-      default:
-        _endPoint = _startPoint; // Default to start point if no match
-    }
+    _startPoint = LatLng(route.startLat, route.startLong); // BUP
+    _endPoint = LatLng(route.endLat, route.endLong);
+    points = route.routeCoordinatesInOrder;
+    print("Endpoint: $_endPoint");
+    print("Stoppages: $points");
+    busName = route.title;
   }
 
   @override
@@ -168,37 +112,42 @@ class _MapPageState extends State<MapPage> {
               ),
               myLocationEnabled: true,
               myLocationButtonEnabled: true,
-              polylines: routes.routes,
+              polylines: {
+                Polyline(
+                  polylineId: const PolylineId("Route"),
+                  points: points,
+                  color: Colors.lightBlue,
+                  width: 5,
+                ),
+              },
               markers: {
                 // Marker for the bus's current location
                 Marker(
-                  markerId: const MarkerId('bus_marker'),
+                  markerId: const MarkerId('Bus'),
                   position: LatLng(
                     _currentLocation!['lat'],
                     _currentLocation!['long'],
                   ),
-                  infoWindow: InfoWindow(title: "Bus ${widget.busId}"),
-                  icon: BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueYellow),
+                  infoWindow: InfoWindow(title: busName),
+                  icon: busMarker,
                 ),
                 // Marker for the start point (BUP)
                 Marker(
-                  markerId: const MarkerId('start_marker'),
+                  markerId: const MarkerId('BUP'),
                   position: _startPoint,
                   infoWindow: const InfoWindow(title: "BUP"),
-                  icon: BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueAzure),
+                  icon: bupMarker,
                 ),
                 // Marker for the end point
                 Marker(
-                  markerId: const MarkerId('end_marker'),
+                  markerId: const MarkerId('End'),
                   position: _endPoint,
                   infoWindow: InfoWindow(
                       title: RouteModel.values
                           .firstWhere((route) => route.busId == widget.busId)
                           .end),
                   icon: BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueRed),
+                      BitmapDescriptor.hueMagenta),
                 ),
               },
               onMapCreated: (controller) {
