@@ -1,7 +1,6 @@
 import 'package:bus_tracker_user_app/models/route_model.dart';
 import 'package:bus_tracker_user_app/screens/map_page.dart';
 import 'package:flutter/material.dart';
-//import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Routes extends StatefulWidget {
   const Routes({
@@ -113,8 +112,8 @@ class _RoutesState extends State<Routes> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => MapPage(
-                              busId: widget
-                                  .routeModel.busId, // Pass the specific busId
+                              title: widget.routeModel
+                                  .title, // Pass the specific bus title
                             ),
                           ),
                         );

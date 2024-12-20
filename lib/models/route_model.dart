@@ -3,7 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 enum RouteModel {
   route1(
     title: "BUP-Uttara",
-    busId: "busID1",
+    busId: ["busID1"],
     image: "BUS_ROUTE_STD-0.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -40,7 +40,7 @@ enum RouteModel {
   ),
   route2(
     title: "BUP-JFP-Kakrail",
-    busId: "busID2",
+    busId: ["busID2"],
     image: "BUS_ROUTE_STD-1.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -89,7 +89,7 @@ enum RouteModel {
   ),
   route3(
     title: "BUP-Maghbazar-Kakrail",
-    busId: "busID3",
+    busId: ["busID3"],
     image: "BUS_ROUTE_STD-2.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -130,7 +130,7 @@ enum RouteModel {
   ),
   route4(
     title: "BUP-Shahbagh",
-    busId: "busID4",
+    busId: ["busID4"],
     image: "BUS_ROUTE_STD-3.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -183,7 +183,7 @@ enum RouteModel {
   ),
   route5(
     title: "BUP-Khamar Bari Mor",
-    busId: "busID5",
+    busId: ["busID5"],
     image: "BUS_ROUTE_STD-4.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -214,6 +214,7 @@ enum RouteModel {
       LatLng(23.785246586805254, 90.37788032644607), // Taltola
       LatLng(23.777566693348877, 90.38026955069353), // Agargaon
       LatLng(23.76561996438381, 90.38311613720279), // Chandrima Uddan
+      LatLng(23.759012922190287, 90.38372102821918), // Farmgate
     ],
     end: "Khamar Bari Mor",
     endLat: 23.758880509925685,
@@ -222,7 +223,7 @@ enum RouteModel {
 
   route6(
     title: "BUP-Asad Gate",
-    busId: "busID6",
+    busId: ["busID6", "busID8"],
     image: "BUS_ROUTE_STD-5.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -282,7 +283,7 @@ enum RouteModel {
 
   route7(
     title: "BUP-City College",
-    busId: "busID7",
+    busId: ["busID7", "busID9"],
     image: "BUS_ROUTE_STD-6.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -314,26 +315,29 @@ enum RouteModel {
       LatLng(23.834961899131887, 90.35881453781377), // DSCSC
       LatLng(23.831960189009205, 90.36158785487743), // DSCSC Mosque
       LatLng(23.831993428090584, 90.3636712000425), // NDC
-      LatLng(23.828898622365294, 90.36433534898919), // Mirpur 12
       LatLng(23.82450543703228, 90.36437900329229), // Mirpur 11.5
-      LatLng(23.81860252691158, 90.36697822674736), // Mirpur 11
-      LatLng(23.80976090880386, 90.36061568000457), // Proshika
-      LatLng(23.807290912726415, 90.35464526651138), // Commerce College
-      LatLng(23.79998987037693, 90.35487926859835), // Sony Hall
-      LatLng(23.79566184237608, 90.35325756194035), // Mirpur 01
-      LatLng(23.791327706565657, 90.35422983767526), // Ansar Camp
-      LatLng(23.784842683585428, 90.35251449534634), // Bangla College
-      LatLng(23.781494797176006, 90.35247157974737), // Technical
-      LatLng(23.77831238547684, 90.36117189534615), // Kallyanpur
-      LatLng(23.774820158262894, 90.36546078767482), // Shamoli
-      LatLng(23.760756495511984, 90.37292744206489), // Asad Gate
-      LatLng(23.76824603842149, 90.36916972597055), // College Gate
-      LatLng(23.755751893538253, 90.37312448000291), // Genetic Plaza
-      LatLng(23.740042506398567, 90.37501625540348), // Agora
-      LatLng(23.75101940282221, 90.36819696466021), // Sankar
-      LatLng(23.744744029380264, 90.37252198000262), // Dhanmondi 15 No Road
-      LatLng(23.746025727736527, 90.38097265116696), // Dhanmondi 8 No Road
-      LatLng(23.739122866135798, 90.37636304528047), // RGB & No Gate
+      LatLng(23.81575733203357, 90.36609331950163), // Mirpur 11/Milk-vita Road
+      LatLng(23.81497659913363, 90.36272507856626), // Spartan Fitness
+      LatLng(23.811432855624155, 90.36078667427861), // Nishat Bike Zone
+      LatLng(23.809448679628332, 90.36116408985072), // Proshika
+      LatLng(23.806011086470996, 90.35154979834113), // Commerce College
+      LatLng(23.805125077616925, 90.35166838227215), // Commerce College mor
+      LatLng(23.79997655599662, 90.3552123423596), // Sony Hall
+      LatLng(23.798556103428073, 90.35323394679146), // Mirpur 01
+      LatLng(23.785152440899125, 90.35384335041337), // Bangla College
+      LatLng(23.781608038156982, 90.35178387650694), // Technical
+      LatLng(23.7791332296404, 90.35649725740001), // Khalek Pump
+      LatLng(23.778578290239505, 90.35995456599186), // Kallyanpur
+      LatLng(23.773371725590795, 90.36720947907511), // Shishu Mela
+      LatLng(23.76805928059568, 90.36928405313525), // College Gate
+      LatLng(23.76422310934237, 90.37073833361552), // Aurangajeb Road
+      LatLng(23.756422136549237, 90.37528687446108), // Genetic Plaza
+      LatLng(23.751743668846245, 90.36759269016606), // Ibn Sina
+      LatLng(23.74164067368401, 90.3742900105101), // Ibn Sina
+      LatLng(23.738358799060823, 90.37595889954443), // Shimanto Sqaure
+      LatLng(23.739520720045885, 90.38321787625766), // City College
+      LatLng(23.744720379331042, 90.38203916397235), // Dhanmondi 7 No Road
+      LatLng(23.75644266256043, 90.37524425608902), // Genetic Plaza
     ],
     end: "City College",
     endLat: 23.739079042145477,
@@ -355,7 +359,7 @@ enum RouteModel {
   });
 
   final String title;
-  final String busId;
+  final List<String> busId;
   final String image;
   final String start;
   final double startLat;

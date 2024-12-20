@@ -5,12 +5,9 @@ import 'package:location/location.dart';
 import 'package:bus_tracker_user_app/models/route_model.dart';
 
 class MapPage extends StatefulWidget {
-  final String busId;
+  final String title;
 
-  const MapPage({
-    super.key,
-    required this.busId,
-  });
+  const MapPage({super.key, required this.title});
 
   @override
   _MapPageState createState() => _MapPageState();
@@ -23,15 +20,13 @@ class _MapPageState extends State<MapPage> {
         "https://bus-tracker-bbaa6-default-rtdb.asia-southeast1.firebasedatabase.app",
   ).ref("Buses");
 
-  Map<String, dynamic>? _currentLocation;
-  late GoogleMapController _mapController;
+  Map<String, Marker> _busMarkers = {}; // Map to hold bus markers dynamically
+  GoogleMapController? _mapController;
 
   BitmapDescriptor busMarker = BitmapDescriptor.defaultMarker;
   BitmapDescriptor bupMarker = BitmapDescriptor.defaultMarker;
-  BitmapDescriptor endMarker = BitmapDescriptor.defaultMarker;
 
-  late List<LatLng> points = [];
-
+  List<LatLng> points = [];
   String busName = "";
 
   late LatLng _startPoint;
@@ -40,213 +35,272 @@ class _MapPageState extends State<MapPage> {
   late Location _location;
   LatLng? _userLocation;
 
+  final Map<String, List<String>> busesForRoute = {
+    "BUP-Asad Gate": ["busID6", "busID8"],
+    "BUP-City College": ["busID7", "busID9"],
+  };
+
+  Map<String, String> busStatuses = {}; // Stores the status of each bus
+
   @override
   void initState() {
     super.initState();
-    addCustomIcon();
+    _loadCustomIcons();
     _initializeRouteCoordinates();
-    _listenToBusLocation();
+    _listenToBusLocations();
     _getUserLocation();
+    _listenToBusStatuses();
   }
 
-  void addCustomIcon() {
-    BitmapDescriptor.asset(
-            const ImageConfiguration(), "assets/images/Bus_marker.png")
-        .then((Icon) {
-      setState(() {
-        busMarker = Icon;
-      });
-    });
-    BitmapDescriptor.asset(
-            const ImageConfiguration(), "assets/images/BUP_marker.png")
-        .then((Icon) {
-      setState(() {
-        bupMarker = Icon;
-      });
-    });
-    BitmapDescriptor.asset(
-            const ImageConfiguration(), "assets/images/End_marker.png")
-        .then((Icon) {
-      setState(() {
-        endMarker = Icon;
-      });
-    });
+  Future<void> _loadCustomIcons() async {
+    busMarker = await BitmapDescriptor.asset(
+      const ImageConfiguration(),
+      "assets/images/Bus_marker.png",
+      height: 48.0,
+      width: 40.0,
+    );
+    bupMarker = await BitmapDescriptor.asset(
+      const ImageConfiguration(),
+      "assets/images/BUP_marker.png",
+      height: 48.0,
+      width: 40.0,
+    );
+    setState(() {});
   }
 
-  // Initialize the start and end points based on the bus route
-  void _initializeRouteCoordinates() async {
+  void _initializeRouteCoordinates() {
     final route =
-        RouteModel.values.firstWhere((route) => route.busId == widget.busId);
+        RouteModel.values.firstWhere((route) => route.title == widget.title);
 
-    // Set start and end points based on the route
-    _startPoint = LatLng(route.startLat, route.startLong); // BUP
+    _startPoint = LatLng(route.startLat, route.startLong);
     _endPoint = LatLng(route.endLat, route.endLong);
     points = route.routeCoordinatesInOrder;
-    print("Endpoint: $_endPoint");
-    print("Stoppages: $points");
-    busName = route.title;
+
+    setState(() {
+      busName = route.title;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Bus Tracker',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text('Bus Tracker', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green[900],
         centerTitle: true,
-        iconTheme: const IconThemeData(
-          color: Colors.white, // Back button color
-        ),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: _currentLocation != null && _userLocation != null
-          ? GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: LatLng(
-                  _currentLocation!['lat'],
-                  _currentLocation!['long'],
-                ),
-                zoom: 14,
-              ),
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              polylines: {
-                Polyline(
-                  polylineId: const PolylineId("Route"),
-                  points: points,
-                  color: Colors.lightBlue,
-                  width: 5,
-                ),
-              },
-              markers: {
-                // Marker for the bus's current location
-                Marker(
-                  markerId: const MarkerId('Bus'),
-                  position: LatLng(
-                    _currentLocation!['lat'],
-                    _currentLocation!['long'],
-                  ),
-                  infoWindow: InfoWindow(title: busName),
-                  icon: busMarker,
-                ),
-                // Marker for the start point (BUP)
-                Marker(
-                  markerId: const MarkerId('BUP'),
-                  position: _startPoint,
-                  infoWindow: const InfoWindow(title: "BUP"),
-                  icon: bupMarker,
-                ),
-                // Marker for the end point
-                Marker(
-                  markerId: const MarkerId('End'),
-                  position: _endPoint,
-                  infoWindow: InfoWindow(
-                      title: RouteModel.values
-                          .firstWhere((route) => route.busId == widget.busId)
-                          .end),
-                  icon: BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueMagenta),
-                ),
-              },
-              onMapCreated: (controller) {
-                _mapController = controller;
-                _zoomToFit(); // Adjust camera to show both start and end points
-              },
-            )
-          : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Center(
-                child: LinearProgressIndicator(
-                  color: Colors.green[900],
-                  minHeight: 5.0,
-                  semanticsLabel: 'Loading progress',
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
+      body: Stack(
+        children: [
+          GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: _startPoint,
+              zoom: 14,
             ),
-    );
-  }
-
-  // Adjust the camera to fit both the start and end points
-  void _zoomToFit() {
-    final LatLngBounds bounds = LatLngBounds(
-      southwest: LatLng(
-        _startPoint.latitude < _endPoint.latitude
-            ? _startPoint.latitude
-            : _endPoint.latitude,
-        _startPoint.longitude < _endPoint.longitude
-            ? _startPoint.longitude
-            : _endPoint.longitude,
-      ),
-      northeast: LatLng(
-        _startPoint.latitude > _endPoint.latitude
-            ? _startPoint.latitude
-            : _endPoint.latitude,
-        _startPoint.longitude > _endPoint.longitude
-            ? _startPoint.longitude
-            : _endPoint.longitude,
-      ),
-    );
-
-    // Animate the camera to fit the bounds with a padding of 50 units
-    _mapController.animateCamera(
-      CameraUpdate.newLatLngBounds(bounds, 50),
-    );
-  }
-
-  void _listenToBusLocation() {
-    _database.child(widget.busId).child('location').onValue.listen(
-      (event) {
-        print("Data snapshot received: ${event.snapshot.value}");
-        final data = event.snapshot.value as Map<dynamic, dynamic>?;
-
-        if (data != null &&
-            data.containsKey('lat') &&
-            data.containsKey('long')) {
-          setState(() {
-            _currentLocation = {
-              "lat": data['lat'],
-              "long": data['long'],
-            };
-          });
-          print("Updated location: $_currentLocation");
-
-          // Automatically move the camera to the new location
-          // ignore: unnecessary_null_comparison
-          if (_mapController != null) {
-            _mapController.animateCamera(
-              CameraUpdate.newLatLng(
-                LatLng(data['lat'], data['long']),
+            myLocationEnabled: true,
+            myLocationButtonEnabled: true,
+            polylines: {
+              Polyline(
+                polylineId: const PolylineId("Route"),
+                points: points,
+                color: Colors.lightBlue,
+                width: 5,
               ),
-            );
-          }
-        } else {
-          print("Invalid or missing location data for bus ID: ${widget.busId}");
-          setState(() {
-            _currentLocation = null;
-          });
-        }
-      },
-      onError: (error) {
-        print("Error while listening to location updates: $error");
-        setState(() {
-          _currentLocation = null;
-        });
-      },
+            },
+            markers: _buildMarkers(),
+            onMapCreated: (controller) {
+              _mapController = controller;
+              _zoomToFit();
+            },
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: _buildBusStatusWidget(),
+          ),
+        ],
+      ),
     );
+  }
+
+  Set<Marker> _buildMarkers() {
+    return {
+      ..._busMarkers.values, // Dynamic bus markers
+      Marker(
+        markerId: const MarkerId('BUP'),
+        position: _startPoint,
+        infoWindow: const InfoWindow(title: "BUP"),
+        icon: bupMarker,
+      ),
+      Marker(
+        markerId: const MarkerId('End'),
+        position: _endPoint,
+        infoWindow: const InfoWindow(title: "Destination"),
+        icon:
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta),
+      ),
+    };
+  }
+
+  Widget _buildBusStatusWidget() {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      margin: const EdgeInsets.symmetric(horizontal: 55.0, vertical: 30.0),
+      decoration: BoxDecoration(
+        color: Colors.green.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: busStatuses.entries.map((entry) {
+          String status = entry.value;
+          return Column(
+            children: [
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Route Name",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      color: Colors.black,
+                      fontSize: 18,
+                    ),
+                  ),
+                  Text(
+                    "Bus Status",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    busName,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      color: status == "On Route"
+                          ? Colors.green[900]
+                          : const Color.fromARGB(255, 182, 18, 6),
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    status,
+                    style: TextStyle(
+                      color: status == "On Route"
+                          ? Colors.green[900]
+                          : const Color.fromARGB(255, 182, 18, 6),
+                      fontWeight: FontWeight.w900,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  void _zoomToFit() {
+    if (_mapController != null) {
+      LatLngBounds bounds = LatLngBounds(
+        southwest: LatLng(
+          _startPoint.latitude < _endPoint.latitude
+              ? _startPoint.latitude
+              : _endPoint.latitude,
+          _startPoint.longitude < _endPoint.longitude
+              ? _startPoint.longitude
+              : _endPoint.longitude,
+        ),
+        northeast: LatLng(
+          _startPoint.latitude > _endPoint.latitude
+              ? _startPoint.latitude
+              : _endPoint.latitude,
+          _startPoint.longitude > _endPoint.longitude
+              ? _startPoint.longitude
+              : _endPoint.longitude,
+        ),
+      );
+
+      _mapController!.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
+    }
+  }
+
+  void _listenToBusLocations() {
+    final route =
+        RouteModel.values.firstWhere((route) => route.title == widget.title);
+    final List<String> busIds = route.busId;
+
+    for (String busId in busIds) {
+      _database.child(busId).child('location').onValue.listen(
+        (event) {
+          final data = event.snapshot.value as Map<dynamic, dynamic>?;
+
+          if (data != null &&
+              data.containsKey('lat') &&
+              data.containsKey('long')) {
+            final LatLng busPosition = LatLng(data['lat'], data['long']);
+
+            setState(() {
+              _busMarkers[busId] = Marker(
+                markerId: MarkerId(busId),
+                position: busPosition,
+                infoWindow: InfoWindow(title: "Bus: $busName"),
+                icon: busMarker,
+              );
+            });
+          }
+        },
+        onError: (error) {
+          print("Error listening to location for bus $busId: $error");
+        },
+      );
+    }
+  }
+
+  void _listenToBusStatuses() {
+    final route =
+        RouteModel.values.firstWhere((route) => route.title == widget.title);
+    final List<String> busIds = route.busId;
+
+    for (String busId in busIds) {
+      _database.child(busId).child('status').onValue.listen(
+        (event) {
+          final data = event.snapshot.value as bool?;
+          if (data != null) {
+            setState(() {
+              busStatuses[busId] = data ? "On Route" : "At BUP";
+            });
+          }
+        },
+        onError: (error) {
+          print("Error listening to status for bus $busId: $error");
+        },
+      );
+    }
   }
 
   Future<void> _getUserLocation() async {
     _location = Location();
-    //_userLocation = await _location.getLocation();
+
     try {
       bool serviceEnabled = await _location.serviceEnabled();
-      if (!serviceEnabled) {
-        serviceEnabled = await _location.requestService();
-        if (!serviceEnabled) return;
-      }
+      if (!serviceEnabled) serviceEnabled = await _location.requestService();
+      if (!serviceEnabled) return;
 
       PermissionStatus permissionGranted = await _location.hasPermission();
       if (permissionGranted == PermissionStatus.denied) {
@@ -258,15 +312,6 @@ class _MapPageState extends State<MapPage> {
       setState(() {
         _userLocation = LatLng(locationData.latitude!, locationData.longitude!);
       });
-
-      _mapController.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(
-            target: _userLocation!,
-            zoom: 14.0,
-          ),
-        ),
-      );
     } catch (e) {
       print("Error retrieving location: $e");
     }
