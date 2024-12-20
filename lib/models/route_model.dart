@@ -3,7 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 enum RouteModel {
   route1(
     title: "BUP-Uttara",
-    busId: ["busID1"],
+    busId: ["busID1", "busID10"],
     image: "BUS_ROUTE_STD-0.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -40,7 +40,7 @@ enum RouteModel {
   ),
   route2(
     title: "BUP-JFP-Kakrail",
-    busId: ["busID2"],
+    busId: ["busID2", "busID11"],
     image: "BUS_ROUTE_STD-1.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -89,7 +89,7 @@ enum RouteModel {
   ),
   route3(
     title: "BUP-Maghbazar-Kakrail",
-    busId: ["busID3"],
+    busId: ["busID3", "busID12"],
     image: "BUS_ROUTE_STD-2.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -130,7 +130,7 @@ enum RouteModel {
   ),
   route4(
     title: "BUP-Shahbagh",
-    busId: ["busID4"],
+    busId: ["busID4", "busID13"],
     image: "BUS_ROUTE_STD-3.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -183,7 +183,7 @@ enum RouteModel {
   ),
   route5(
     title: "BUP-Khamar Bari Mor",
-    busId: ["busID5"],
+    busId: ["busID5", "busID14"],
     image: "BUS_ROUTE_STD-4.png",
     start: "BUP",
     startLat: 23.83944781693273,

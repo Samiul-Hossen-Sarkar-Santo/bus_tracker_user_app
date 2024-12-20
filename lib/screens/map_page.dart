@@ -20,7 +20,8 @@ class _MapPageState extends State<MapPage> {
         "https://bus-tracker-bbaa6-default-rtdb.asia-southeast1.firebasedatabase.app",
   ).ref("Buses");
 
-  Map<String, Marker> _busMarkers = {}; // Map to hold bus markers dynamically
+  final Map<String, Marker> _busMarkers =
+      {}; // Map to hold bus markers dynamically
   GoogleMapController? _mapController;
 
   BitmapDescriptor busMarker = BitmapDescriptor.defaultMarker;
@@ -33,9 +34,15 @@ class _MapPageState extends State<MapPage> {
   late LatLng _endPoint;
 
   late Location _location;
+  // ignore: unused_field
   LatLng? _userLocation;
 
   final Map<String, List<String>> busesForRoute = {
+    "BUP-Uttara": ["busID1", "busID10"],
+    "BUP-JFP-Kakrail": ["busID2", "busID11"],
+    "BUP-Maghbazar-Kakrail": ["busID3", "busID12"],
+    "BUP-Shahbagh": ["busID4", "busID13"],
+    "BUP-Khamar Bari Mor": ["busID5", "busID14"],
     "BUP-Asad Gate": ["busID6", "busID8"],
     "BUP-City College": ["busID7", "busID9"],
   };
@@ -50,6 +57,18 @@ class _MapPageState extends State<MapPage> {
     _listenToBusLocations();
     _getUserLocation();
     _listenToBusStatuses();
+  }
+
+  String getBusName(String busId) {
+    final route =
+        RouteModel.values.firstWhere((route) => route.title == widget.title);
+    final List<String> busIds = route.busId;
+    if (busIds.first == busId) {
+      return "$busName 1";
+    } else if (busIds.last == busId) {
+      return "$busName 2";
+    }
+    return "";
   }
 
   Future<void> _loadCustomIcons() async {
@@ -187,7 +206,7 @@ class _MapPageState extends State<MapPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    busName,
+                    getBusName(entry.key), //key e bus id ache
                     style: TextStyle(
                       fontWeight: FontWeight.w900,
                       color: status == "On Route"
@@ -247,22 +266,30 @@ class _MapPageState extends State<MapPage> {
 
     for (String busId in busIds) {
       _database.child(busId).child('location').onValue.listen(
-        (event) {
+        (event) async {
           final data = event.snapshot.value as Map<dynamic, dynamic>?;
 
           if (data != null &&
               data.containsKey('lat') &&
               data.containsKey('long')) {
-            final LatLng busPosition = LatLng(data['lat'], data['long']);
+            final statusSnapshot =
+                await _database.child(busId).child('status').get();
+            if (statusSnapshot.value == true) {
+              final LatLng busPosition = LatLng(data['lat'], data['long']);
 
-            setState(() {
-              _busMarkers[busId] = Marker(
-                markerId: MarkerId(busId),
-                position: busPosition,
-                infoWindow: InfoWindow(title: "Bus: $busName"),
-                icon: busMarker,
-              );
-            });
+              setState(() {
+                _busMarkers[busId] = Marker(
+                  markerId: MarkerId(busId),
+                  position: busPosition,
+                  infoWindow: InfoWindow(title: "Bus: $busName"),
+                  icon: busMarker,
+                );
+              });
+            } else {
+              setState(() {
+                _busMarkers.remove(busId);
+              });
+            }
           }
         },
         onError: (error) {
