@@ -38,13 +38,14 @@ class _MapPageState extends State<MapPage> {
   LatLng? _userLocation;
 
   final Map<String, List<String>> busesForRoute = {
-    "BUP-Uttara": ["busID1", "busID10"],
-    "BUP-JFP-Kakrail": ["busID2", "busID11"],
-    "BUP-Maghbazar-Kakrail": ["busID3", "busID12"],
-    "BUP-Shahbagh": ["busID4", "busID13"],
-    "BUP-Khamar Bari Mor": ["busID5", "busID14"],
-    "BUP-Asad Gate": ["busID6", "busID8"],
-    "BUP-City College": ["busID7", "busID9"],
+    "BUP-Uttara": ["busID1", "busID2"],
+    "BUP-JFP-Kakrail": ["busID3", "busID4"],
+    "BUP-Maghbazar-Kakrail": ["busID5", "busID6"],
+    "BUP-Shahbagh": ["busID7", "busID8"],
+    "BUP-Khamar Bari Mor": ["busID9", "busID10"],
+    "BUP-Asad Gate": ["busID11", "busID12"],
+    "BUP-City College": ["busID13", "busID14"],
+    "BUP-Jahangir Gate": ["busID15", "busID16"],
   };
 
   Map<String, String> busStatuses = {}; // Stores the status of each bus

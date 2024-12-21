@@ -76,12 +76,12 @@ class _RouteDetailsState extends State<RouteDetails> {
           // Grid layout for filtered bus routes
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2, // 2 cards per row
                   mainAxisSpacing: 16.0,
-                  crossAxisSpacing: 16.0,
+                  crossAxisSpacing: 10.0,
                   childAspectRatio: 3 / 2, // Aspect ratio for cards
                 ),
                 itemCount: filteredRoutes.length,
@@ -98,18 +98,18 @@ class _RouteDetailsState extends State<RouteDetails> {
                       );
                     },
                     child: Card(
-                      elevation: 4,
+                      elevation: 7,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
                       color: Colors.green[50],
                       child: Center(
                         child: Text(
                           route.title,
                           style: TextStyle(
-                            color: Colors.green[900],
+                            color: Colors.green[800],
                             fontWeight: FontWeight.bold,
-                            fontSize: 16.0,
+                            fontSize: 17.0,
                           ),
                           textAlign: TextAlign.center,
                         ),
