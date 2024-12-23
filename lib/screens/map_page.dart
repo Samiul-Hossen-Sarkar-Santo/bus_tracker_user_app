@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:location/location.dart';
 import 'package:bus_tracker_user_app/models/route_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatefulWidget {
   final String title;
@@ -36,6 +37,7 @@ class _MapPageState extends State<MapPage> {
   late Location _location;
   // ignore: unused_field
   LatLng? _userLocation;
+  LatLng? _selectedLocation;
 
   final Map<String, List<String>> busesForRoute = {
     "BUP-Uttara": ["busID1", "busID2"],
@@ -101,6 +103,9 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
+  // To control the visibility of the text bubble
+  bool _showBubble = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,10 +137,166 @@ class _MapPageState extends State<MapPage> {
               _mapController = controller;
               _zoomToFit();
             },
+            onTap: (LatLng tappedLocation) {
+              // Add a marker and save the location
+              setState(() {
+                _selectedLocation = tappedLocation;
+                _showBubble = false;
+              });
+            },
           ),
           Align(
             alignment: Alignment.bottomCenter,
             child: _buildBusStatusWidget(),
+          ),
+          if (_selectedLocation != null)
+            Column(
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 16.0, left: 16.0),
+                    child: _buildGetDirectionsButton(),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8.0, left: 16.0),
+                    child: _clearMarker(),
+                  ),
+                ),
+              ],
+            ),
+          if (_showBubble) _buildTextBubble(),
+        ],
+      ),
+    );
+  }
+
+  Widget _clearMarker() {
+    return ElevatedButton(
+      onPressed: () {
+        setState(() {
+          _selectedLocation = null;
+        });
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+          vertical: 8.0,
+        ),
+      ),
+      child: const Text(
+        "Clear Marker",
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  // Extracted method to build the text bubble
+  Widget _buildTextBubble() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12.0,
+        vertical: 9.0,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.green.withOpacity(0.7),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.5),
+                blurRadius: 2,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.info_outline,
+                color: Colors.white,
+                size: 18,
+              ),
+              SizedBox(width: 8),
+              Text(
+                'Tap anywhere on the map \nto get directions!',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGetDirectionsButton() {
+    return ElevatedButton(
+      onPressed: () {
+        _showConfirmationDialog();
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green[600],
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+          vertical: 8.0,
+        ),
+      ),
+      child: const Text(
+        "Get Directions to This Point",
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  void _showConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.grey[900],
+        title: const Text(
+          "Open Google Maps?",
+          style: TextStyle(color: Colors.white),
+        ),
+        content: const Text(
+          "You're about to leave this app and open Google Maps for directions. Do you want to proceed?",
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+            },
+            child: const Text(
+              "Cancel",
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+              _openGoogleMaps(_selectedLocation!); // Open Google Maps
+            },
+            child: const Text(
+              "Proceed",
+              style: TextStyle(color: Colors.green),
+            ),
           ),
         ],
       ),
@@ -143,7 +304,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   Set<Marker> _buildMarkers() {
-    return {
+    final markers = {
       ..._busMarkers.values, // Dynamic bus markers
       Marker(
         markerId: const MarkerId('BUP'),
@@ -159,12 +320,41 @@ class _MapPageState extends State<MapPage> {
             BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta),
       ),
     };
+
+    // Add the tapped location marker if it exists
+    if (_selectedLocation != null) {
+      markers.add(
+        Marker(
+          markerId: const MarkerId('selected-location'),
+          position: _selectedLocation!,
+          infoWindow: const InfoWindow(title: "Selected Location"),
+          icon: BitmapDescriptor.defaultMarker,
+        ),
+      );
+    }
+
+    return markers;
+  }
+
+  Future<void> _openGoogleMaps(LatLng destination) async {
+    if (_userLocation != null) {
+      String googleMapsUrl =
+          "https://www.google.com/maps/dir/?api=1&origin=${_userLocation!.latitude},${_userLocation!.longitude}&destination=${destination.latitude},${destination.longitude}&travelmode=driving";
+
+      final Uri googleMapsUri = Uri.parse(googleMapsUrl);
+
+      if (await canLaunchUrl(googleMapsUri)) {
+        await launchUrl(googleMapsUri);
+      } else {
+        throw "Could not open Google Maps.";
+      }
+    }
   }
 
   Widget _buildBusStatusWidget() {
     return Container(
       padding: const EdgeInsets.all(16.0),
-      margin: const EdgeInsets.symmetric(horizontal: 55.0, vertical: 30.0),
+      margin: const EdgeInsets.symmetric(horizontal: 55.0, vertical: 60.0),
       decoration: BoxDecoration(
         color: Colors.green.withOpacity(0.8),
         borderRadius: BorderRadius.circular(10),

@@ -287,8 +287,8 @@ class _HomeState extends State<Home> {
                                       'assets/images/Santo.png',
                                       'Lead Developer and Designer',
                                       'https://www.facebook.com/shamiulhossensanto',
-                                      'https://www.linkedin.com/in/samiul-hossen/',
                                       'https://www.instagram.com/samiul.hossen/',
+                                      'https://www.linkedin.com/in/samiul-hossen/',
                                     );
                                   },
                                   child: const CircleAvatar(
