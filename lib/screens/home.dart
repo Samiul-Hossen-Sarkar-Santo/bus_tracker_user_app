@@ -14,21 +14,26 @@ class _HomeState extends State<Home> {
 
   // Function to show the team member's details in a dialog
   void _showTeamMemberDetails(BuildContext context, String name,
-      String imageUrl, String bio, String fb, String ln, String ig) {
+      String imageUrl, String bio, String fb, String ln, String ig, String mh) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(name),
+        title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircleAvatar(
-              backgroundImage: AssetImage(imageUrl),
-              radius: 50,
+            GestureDetector(
+              onTap: () {
+                _launchMHURL(mh);
+              },
+              child: CircleAvatar(
+                backgroundImage: AssetImage(imageUrl),
+                radius: 50,
+              ),
             ),
             const SizedBox(height: 10),
             Text(bio),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -77,6 +82,15 @@ class _HomeState extends State<Home> {
 
   Future<void> _launchFacebookURL(String fb) async {
     final Uri url = Uri.parse(fb);
+    try {
+      await launchUrl(url);
+    } catch (e) {
+      print('Error launching URL: $e');
+    }
+  }
+
+  Future<void> _launchMHURL(String mh) async {
+    final Uri url = Uri.parse(mh);
     try {
       await launchUrl(url);
     } catch (e) {
@@ -260,6 +274,7 @@ class _HomeState extends State<Home> {
                                       'https://www.facebook.com/mohsinsrj03',
                                       'https://www.instagram.com/vallagena_kichu/',
                                       'https://www.linkedin.com/in/mohsinsiraj03/',
+                                      'https://github.com/meawsin',
                                     );
                                   },
                                   child: const CircleAvatar(
@@ -289,6 +304,7 @@ class _HomeState extends State<Home> {
                                       'https://www.facebook.com/shamiulhossensanto',
                                       'https://www.instagram.com/samiul.hossen/',
                                       'https://www.linkedin.com/in/samiul-hossen/',
+                                      'https://sites.google.com/view/samiul-hossen-sarkar-santo/about-me',
                                     );
                                   },
                                   child: const CircleAvatar(
