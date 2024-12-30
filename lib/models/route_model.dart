@@ -479,7 +479,7 @@ enum RouteModel {
   ),
   route4(
     title: "BUP-Shahbagh",
-    busId: ["busID6", "busID8"],
+    busId: ["busID7", "busID8"],
     image: "BUS_ROUTE_STD-3.png",
     start: "BUP",
     startLat: 23.83944781693273,
