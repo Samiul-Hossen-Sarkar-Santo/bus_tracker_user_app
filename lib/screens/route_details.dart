@@ -1,6 +1,4 @@
 import 'package:bus_tracker_user_app/models/route_model.dart';
-import 'package:bus_tracker_user_app/screens/Home.dart';
-import 'package:bus_tracker_user_app/screens/all_routes.dart';
 import 'package:bus_tracker_user_app/screens/routes.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +24,6 @@ class _RouteDetailsState extends State<RouteDetails> {
               (stop) => stop.toLowerCase().contains(searchQuery.toLowerCase()));
     }).toList();
 
-    int _selectedIndex = 0;
     return Scaffold(
       appBar: AppBar(
         title: const Text(

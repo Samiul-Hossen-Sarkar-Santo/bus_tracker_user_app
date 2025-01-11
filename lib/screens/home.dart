@@ -1,7 +1,7 @@
 import 'package:bus_tracker_user_app/screens/all_routes.dart';
 import 'package:bus_tracker_user_app/screens/emergency_page.dart';
 import 'package:flutter/material.dart';
-import 'package:bus_tracker_user_app/screens/route_details.dart'; // Import the RouteDetails screen
+import 'package:bus_tracker_user_app/screens/route_details.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
@@ -12,8 +12,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _selectedIndex = 0;
-
   // Function to show the team member's details in a dialog
   void _showTeamMemberDetails(BuildContext context, String name,
       String imageUrl, String bio, String fb, String ln, String ig, String mh) {

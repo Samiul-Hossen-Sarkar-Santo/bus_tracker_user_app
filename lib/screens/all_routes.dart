@@ -1,5 +1,3 @@
-import 'package:bus_tracker_user_app/screens/home.dart';
-import 'package:bus_tracker_user_app/screens/route_details.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -395,8 +393,6 @@ class _AllRoutesPageState extends State<AllRoutesPage> {
       _zoomToFit();
     });
   }
-
-  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
