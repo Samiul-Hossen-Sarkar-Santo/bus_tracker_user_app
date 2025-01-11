@@ -51,5 +51,10 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>We need your location to show the bus route on the map.</string>
 
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>tel</string>
+	</array>
+
 </dict>
 </plist>

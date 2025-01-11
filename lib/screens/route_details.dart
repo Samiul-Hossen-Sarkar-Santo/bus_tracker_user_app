@@ -1,5 +1,6 @@
 import 'package:bus_tracker_user_app/models/route_model.dart';
 import 'package:bus_tracker_user_app/screens/Home.dart';
+import 'package:bus_tracker_user_app/screens/all_routes.dart';
 import 'package:bus_tracker_user_app/screens/routes.dart';
 import 'package:flutter/material.dart';
 
@@ -123,33 +124,6 @@ class _RouteDetailsState extends State<RouteDetails> {
         ],
       ),
       backgroundColor: Colors.grey[200],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-            if (index == 0) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (ctx) => const Home()),
-              );
-            }
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.directions_bus),
-            label: 'Routes',
-          ),
-        ],
-        selectedItemColor: Colors.grey,
-        unselectedItemColor: Colors.green[900],
-        backgroundColor: Colors.white,
-      ),
     );
   }
 }

@@ -748,7 +748,7 @@ enum RouteModel {
   ),
   route6(
     title: "BUP-Asad Gate",
-    busId: ["busID11", "busID12"],
+    busId: ["busID11", "busID13"],
     image: "BUS_ROUTE_STD-5.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -845,7 +845,7 @@ enum RouteModel {
   ),
   route7(
     title: "BUP-City College",
-    busId: ["busID13", "busID14"],
+    busId: ["busID12", "busID14"],
     image: "BUS_ROUTE_STD-6.png",
     start: "BUP",
     startLat: 23.83944781693273,
