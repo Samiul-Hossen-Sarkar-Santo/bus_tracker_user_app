@@ -139,7 +139,8 @@ class _HomeState extends State<Home> {
               // Notice Section
               Container(
                 margin: const EdgeInsets.only(top: 16.0),
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.only(
+                    left: 16.0, top: 3.0, bottom: 4.0, right: 16.0),
                 decoration: BoxDecoration(
                   color: Colors.orange[100],
                   borderRadius: BorderRadius.circular(12.0),
@@ -148,13 +149,32 @@ class _HomeState extends State<Home> {
                     width: 2.0,
                   ),
                 ),
-                child: Text(
-                  """Notice: You can track the live location of the ASAD GATE, JFP-Kakrail & City College route only. We'll include more routes later.""",
-                  style: TextStyle(
-                    fontSize: 12.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orange[900],
-                  ),
+                child: Column(
+                  children: [
+                    Text(
+                      """Notice""",
+                      style: TextStyle(
+                        fontSize: 13.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange[900],
+                        shadows: const [
+                          Shadow(
+                            color: Colors.black12,
+                            offset: Offset(1, 1),
+                            blurRadius: 5.0,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      """You can track the live location of the ASAD GATE, JFP-KAKRAIL & CITY COLLEGE route only. And view the detaails of all the routes. We'll include more routes later.""",
+                      style: TextStyle(
+                        fontSize: 11.0,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.orange[900],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 16.0),
@@ -225,7 +245,7 @@ class _HomeState extends State<Home> {
                         builder: (context, constraints) {
                           return Container(
                             padding: const EdgeInsets.symmetric(
-                                vertical: 40.0, horizontal: 16.0),
+                                vertical: 30.0, horizontal: 14.5),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12.0),
                               border: Border.all(
@@ -233,33 +253,41 @@ class _HomeState extends State<Home> {
                                 width: 2.0,
                               ),
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'All Routes!',
                                       style: TextStyle(
-                                        fontSize: constraints.maxWidth * 0.08,
+                                        fontSize: constraints.maxWidth * 0.12,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.green[900],
                                       ),
                                     ),
-                                    const SizedBox(height: 10.0),
-                                    Text(
-                                      'Click to view all routes in one page',
-                                      style: TextStyle(
-                                          fontSize: constraints.maxWidth * 0.04,
-                                          color: Colors.green[700]),
+                                    SizedBox(
+                                      width: constraints.maxWidth * 0.028,
+                                    ),
+                                    Icon(
+                                      Icons.directions_bus,
+                                      size: constraints.maxWidth * 0.16,
+                                      color: Colors.green[900],
                                     ),
                                   ],
                                 ),
-                                Icon(
-                                  Icons.directions_bus,
-                                  size: constraints.maxWidth * 0.145,
-                                  color: Colors.green[900],
+                                SizedBox(
+                                  height: constraints.maxWidth * 0.05,
+                                ),
+                                Text(
+                                  'Click to view all routes in one page',
+                                  style: TextStyle(
+                                    fontSize: constraints.maxWidth * 0.07,
+                                    color: Colors.green[700],
+                                  ),
+                                  textAlign: TextAlign.start,
                                 ),
                               ],
                             ),
@@ -282,7 +310,7 @@ class _HomeState extends State<Home> {
                         builder: (context, constraints) {
                           return Container(
                             padding: const EdgeInsets.symmetric(
-                                vertical: 40.0, horizontal: 16.0),
+                                vertical: 30.0, horizontal: 14.5),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12.0),
                               border: Border.all(
@@ -290,33 +318,40 @@ class _HomeState extends State<Home> {
                                 width: 2.0,
                               ),
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'Emergency!',
                                       style: TextStyle(
-                                        fontSize: constraints.maxWidth * 0.08,
+                                        fontSize: constraints.maxWidth * 0.115,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.green[900],
                                       ),
                                     ),
-                                    const SizedBox(height: 10.0),
-                                    Text(
-                                      'Click for emergency contacts',
-                                      style: TextStyle(
-                                          fontSize: constraints.maxWidth * 0.04,
-                                          color: Colors.green[700]),
+                                    SizedBox(
+                                      width: constraints.maxWidth * 0.028,
+                                    ),
+                                    Icon(
+                                      Icons.warning,
+                                      size: constraints.maxWidth * 0.14,
+                                      color: Colors.green[900],
                                     ),
                                   ],
                                 ),
-                                Icon(
-                                  Icons.warning,
-                                  size: constraints.maxWidth * 0.15,
-                                  color: Colors.green[900],
+                                SizedBox(
+                                  height: constraints.maxWidth * 0.05,
+                                ),
+                                Text(
+                                  'Click to see emergency contacts',
+                                  style: TextStyle(
+                                      fontSize: constraints.maxWidth * 0.07,
+                                      color: Colors.green[700]),
+                                  textAlign: TextAlign.start,
                                 ),
                               ],
                             ),
