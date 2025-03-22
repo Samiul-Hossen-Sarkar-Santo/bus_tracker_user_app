@@ -137,44 +137,46 @@ class _HomeState extends State<Home> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Notice Section
-              Container(
-                margin: const EdgeInsets.only(top: 16.0),
-                padding: const EdgeInsets.only(
-                    left: 16.0, top: 3.0, bottom: 4.0, right: 16.0),
-                decoration: BoxDecoration(
-                  color: Colors.orange[100],
-                  borderRadius: BorderRadius.circular(12.0),
-                  border: Border.all(
-                    color: Colors.orange[700]!,
-                    width: 2.0,
+              Center(
+                child: Container(
+                  margin: const EdgeInsets.only(top: 16.0),
+                  padding: const EdgeInsets.only(
+                      left: 16.0, top: 3.0, bottom: 4.0, right: 16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.orange[100],
+                    borderRadius: BorderRadius.circular(12.0),
+                    border: Border.all(
+                      color: Colors.orange[700]!,
+                      width: 2.0,
+                    ),
                   ),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      """Notice""",
-                      style: TextStyle(
-                        fontSize: 13.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.orange[900],
-                        shadows: const [
-                          Shadow(
-                            color: Colors.black12,
-                            offset: Offset(1, 1),
-                            blurRadius: 5.0,
-                          ),
-                        ],
+                  child: Column(
+                    children: [
+                      Text(
+                        """Notice""",
+                        style: TextStyle(
+                          fontSize: 13.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange[900],
+                          shadows: const [
+                            Shadow(
+                              color: Colors.black12,
+                              offset: Offset(1, 1),
+                              blurRadius: 5.0,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Text(
-                      """You can track the live location of the ASAD GATE, JFP-KAKRAIL & CITY COLLEGE route only. And view the detaails of all the routes. We'll include more routes later.""",
-                      style: TextStyle(
-                        fontSize: 11.0,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.orange[900],
+                      Text(
+                        """You can track the live location of the ASAD GATE, JFP-KAKRAIL & CITY COLLEGE route only. And view the detaails of all the routes. We'll include more routes later.""",
+                        style: TextStyle(
+                          fontSize: 11.0,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.orange[900],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 16.0),
@@ -213,7 +215,7 @@ class _HomeState extends State<Home> {
                           ),
                           const SizedBox(height: 10.0),
                           Text(
-                            'Click to view routes',
+                            'Click to search for your route',
                             style: TextStyle(
                                 fontSize: 15.0, color: Colors.green[700]),
                           ),
