@@ -168,7 +168,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                       Text(
-                        """You can track the live location of the ASAD GATE, JFP-KAKRAIL & CITY COLLEGE route only. And view the detaails of all the routes. We'll include more routes later.""",
+                        """Thank you for downloading the app, leave a review if you like it.""",
                         style: TextStyle(
                           fontSize: 11.0,
                           fontWeight: FontWeight.w500,
@@ -445,7 +445,7 @@ class _HomeState extends State<Home> {
                                   'https://www.facebook.com/mohsinsrj03',
                                   'https://www.instagram.com/vallagena_kichu/',
                                   'https://www.linkedin.com/in/mohsinsiraj03/',
-                                  'https://github.com/meawsin',
+                                  'https://sites.google.com/view/mohsinsiraj',
                                 );
                               },
                               child: const CircleAvatar(
