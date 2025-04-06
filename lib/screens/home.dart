@@ -3,6 +3,8 @@ import 'package:bus_tracker_user_app/screens/emergency_page.dart';
 import 'package:flutter/material.dart';
 import 'package:bus_tracker_user_app/screens/route_details.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:provider/provider.dart';
+import 'package:bus_tracker_user_app/providers/theme_provider.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -129,6 +131,18 @@ class _HomeState extends State<Home> {
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(
+              context.watch<ThemeProvider>().isDarkMode
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+            ),
+            onPressed: () {
+              context.read<ThemeProvider>().toggleTheme();
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
