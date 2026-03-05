@@ -16,6 +16,12 @@ class _RouteDetailsState extends State<RouteDetails> {
   final TextEditingController searchController = TextEditingController();
 
   @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -100,7 +106,7 @@ class _RouteDetailsState extends State<RouteDetails> {
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       color: isDark
-                          ? const Color(0xFF388E3C).withOpacity(0.7)
+                          ? const Color(0xFF388E3C).withValues(alpha: 0.7)
                           : Colors.green[50],
                       child: Center(
                         child: Text(

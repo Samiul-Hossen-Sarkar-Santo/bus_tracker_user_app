@@ -2,13 +2,16 @@ import 'package:bus_tracker_user_app/screens/all_routes.dart';
 import 'package:bus_tracker_user_app/screens/home.dart';
 import 'package:bus_tracker_user_app/screens/route_details.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:bus_tracker_user_app/theme/app_theme.dart';
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
   @override
-  _MainScreenState createState() => _MainScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
@@ -28,10 +31,22 @@ class _MainScreenState extends State<MainScreen> {
     return packageInfo.version;
   }
 
-  void checkForUpdate() async {
-    final updateInfo = await InAppUpdate.checkForUpdate();
-    if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
-      showUpdateDialog();
+  Future<void> checkForUpdate() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+      return;
+    }
+
+    try {
+      final updateInfo = await InAppUpdate.checkForUpdate();
+      if (!mounted) {
+        return;
+      }
+      if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
+        showUpdateDialog();
+      }
+    } catch (e, stackTrace) {
+      debugPrint('Update check failed: $e');
+      debugPrintStack(stackTrace: stackTrace);
     }
   }
 
@@ -62,7 +77,7 @@ class _MainScreenState extends State<MainScreen> {
           TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
-              InAppUpdate.performImmediateUpdate(); // Trigger the update
+              _performImmediateUpdate();
             },
             child: Text(
               'Update Now',
@@ -80,6 +95,21 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     checkForUpdate();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _performImmediateUpdate() async {
+    try {
+      await InAppUpdate.performImmediateUpdate();
+    } catch (e, stackTrace) {
+      debugPrint('Immediate update failed: $e');
+      debugPrintStack(stackTrace: stackTrace);
+    }
   }
 
   @override
@@ -120,10 +150,10 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
         selectedItemColor: isDark
-            ? const Color.fromARGB(255, 0, 205, 10)
+            ? const Color.fromARGB(255, 255, 255, 255)
             : AppTheme.primaryGreen,
         unselectedItemColor:
-            isDark ? const Color.fromARGB(255, 1, 124, 9) : Colors.grey,
+            isDark ? const Color.fromARGB(255, 0, 255, 17) : Colors.grey,
         backgroundColor:
             isDark ? const Color.fromARGB(255, 20, 81, 24) : Colors.white,
         type: BottomNavigationBarType.fixed,

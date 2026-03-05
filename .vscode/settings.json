@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "E:/dev/flutterProjects/bus_tracker_user_app/linux/flutter"
+    "cmake.sourceDirectory": "E:/dev/flutterProjects/bus_tracker_user_app/linux/flutter",
+    "java.gradle.buildServer.enabled": false
 }

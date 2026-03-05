@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -11,7 +13,7 @@ class MapPage extends StatefulWidget {
   const MapPage({super.key, required this.title});
 
   @override
-  _MapPageState createState() => _MapPageState();
+  State<MapPage> createState() => _MapPageState();
 }
 
 class _MapPageState extends State<MapPage> {
@@ -35,7 +37,6 @@ class _MapPageState extends State<MapPage> {
   late LatLng _endPoint;
 
   late Location _location;
-  // ignore: unused_field
   LatLng? _userLocation;
   LatLng? _selectedLocation;
 
@@ -51,6 +52,7 @@ class _MapPageState extends State<MapPage> {
   };
 
   Map<String, String> busStatuses = {}; // Stores the status of each bus
+  final List<StreamSubscription<DatabaseEvent>> _subscriptions = [];
 
   @override
   void initState() {
@@ -87,6 +89,9 @@ class _MapPageState extends State<MapPage> {
       height: 48.0,
       width: 40.0,
     );
+    if (!mounted) {
+      return;
+    }
     setState(() {});
   }
 
@@ -98,6 +103,9 @@ class _MapPageState extends State<MapPage> {
     _endPoint = LatLng(route.endLat, route.endLong);
     points = route.routeCoordinatesInOrder;
 
+    if (!mounted) {
+      return;
+    }
     setState(() {
       busName = route.title;
     });
@@ -210,11 +218,11 @@ class _MapPageState extends State<MapPage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.green.withOpacity(0.7),
+            color: Colors.green.withValues(alpha: 0.7),
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 0.5),
                 blurRadius: 2,
                 offset: const Offset(0, 2),
               ),
@@ -337,17 +345,33 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> _openGoogleMaps(LatLng destination) async {
-    if (_userLocation != null) {
-      String googleMapsUrl =
-          "https://www.google.com/maps/dir/?api=1&origin=${_userLocation!.latitude},${_userLocation!.longitude}&destination=${destination.latitude},${destination.longitude}&travelmode=driving";
+    if (_userLocation == null) {
+      _showTransientMessage('Current location is not available yet.');
+      return;
+    }
 
-      final Uri googleMapsUri = Uri.parse(googleMapsUrl);
+    final String googleMapsUrl =
+        "https://www.google.com/maps/dir/?api=1&origin=${_userLocation!.latitude},${_userLocation!.longitude}&destination=${destination.latitude},${destination.longitude}&travelmode=driving";
 
-      if (await canLaunchUrl(googleMapsUri)) {
-        await launchUrl(googleMapsUri);
-      } else {
-        throw "Could not open Google Maps.";
+    final Uri googleMapsUri = Uri.parse(googleMapsUrl);
+
+    try {
+      if (!await canLaunchUrl(googleMapsUri)) {
+        _showTransientMessage('Could not open Google Maps on this device.');
+        return;
       }
+
+      final bool launched = await launchUrl(
+        googleMapsUri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (!launched) {
+        _showTransientMessage('Could not open Google Maps on this device.');
+      }
+    } catch (e, stackTrace) {
+      debugPrint('Could not open Google Maps: $e');
+      debugPrintStack(stackTrace: stackTrace);
+      _showTransientMessage('Could not open Google Maps on this device.');
     }
   }
 
@@ -356,11 +380,11 @@ class _MapPageState extends State<MapPage> {
       padding: const EdgeInsets.all(16.0),
       margin: const EdgeInsets.symmetric(horizontal: 55.0, vertical: 60.0),
       decoration: BoxDecoration(
-        color: Colors.green.withOpacity(0.8),
+        color: Colors.green.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
+            color: Colors.grey.withValues(alpha: 0.5),
             blurRadius: 5,
             offset: const Offset(0, 3),
           ),
@@ -456,7 +480,8 @@ class _MapPageState extends State<MapPage> {
     final List<String> busIds = route.busId;
 
     for (String busId in busIds) {
-      _database.child(busId).child('location').onValue.listen(
+      final subscription =
+          _database.child(busId).child('location').onValue.listen(
         (event) async {
           final data = event.snapshot.value as Map<dynamic, dynamic>?;
 
@@ -465,9 +490,20 @@ class _MapPageState extends State<MapPage> {
               data.containsKey('long')) {
             final statusSnapshot =
                 await _database.child(busId).child('status').get();
-            if (statusSnapshot.value == true) {
-              final LatLng busPosition = LatLng(data['lat'], data['long']);
+            final statusValue = statusSnapshot.value;
+            if (statusValue == true) {
+              final num? lat = data['lat'] as num?;
+              final num? long = data['long'] as num?;
+              if (lat == null || long == null) {
+                return;
+              }
 
+              final LatLng busPosition =
+                  LatLng(lat.toDouble(), long.toDouble());
+
+              if (!mounted) {
+                return;
+              }
               setState(() {
                 _busMarkers[busId] = Marker(
                   markerId: MarkerId(busId),
@@ -477,6 +513,9 @@ class _MapPageState extends State<MapPage> {
                 );
               });
             } else {
+              if (!mounted) {
+                return;
+              }
               setState(() {
                 _busMarkers.remove(busId);
               });
@@ -484,9 +523,10 @@ class _MapPageState extends State<MapPage> {
           }
         },
         onError: (error) {
-          print("Error listening to location for bus $busId: $error");
+          debugPrint("Error listening to location for bus $busId: $error");
         },
       );
+      _subscriptions.add(subscription);
     }
   }
 
@@ -496,19 +536,24 @@ class _MapPageState extends State<MapPage> {
     final List<String> busIds = route.busId;
 
     for (String busId in busIds) {
-      _database.child(busId).child('status').onValue.listen(
+      final subscription =
+          _database.child(busId).child('status').onValue.listen(
         (event) {
           final data = event.snapshot.value as bool?;
           if (data != null) {
+            if (!mounted) {
+              return;
+            }
             setState(() {
               busStatuses[busId] = data ? "On Route" : "At BUP";
             });
           }
         },
         onError: (error) {
-          print("Error listening to status for bus $busId: $error");
+          debugPrint("Error listening to status for bus $busId: $error");
         },
       );
+      _subscriptions.add(subscription);
     }
   }
 
@@ -527,11 +572,35 @@ class _MapPageState extends State<MapPage> {
       }
 
       final locationData = await _location.getLocation();
+      if (!mounted ||
+          locationData.latitude == null ||
+          locationData.longitude == null) {
+        return;
+      }
       setState(() {
         _userLocation = LatLng(locationData.latitude!, locationData.longitude!);
       });
-    } catch (e) {
-      print("Error retrieving location: $e");
+    } catch (e, stackTrace) {
+      debugPrint("Error retrieving location: $e");
+      debugPrintStack(stackTrace: stackTrace);
     }
+  }
+
+  void _showTransientMessage(String message) {
+    if (!mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  @override
+  void dispose() {
+    for (final subscription in _subscriptions) {
+      subscription.cancel();
+    }
+    _mapController?.dispose();
+    super.dispose();
   }
 }

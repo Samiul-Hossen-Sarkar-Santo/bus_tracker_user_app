@@ -75,48 +75,53 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _launchURL() async {
-    final Uri url = Uri.parse('https://youtu.be/7BOIRHh1WPQ');
-    try {
-      await launchUrl(url);
-    } catch (e) {
-      print('Error launching URL: $e');
-    }
+    await _launchUri(Uri.parse('https://www.youtube.com/watch?v=7BOIRHh1WPQ'));
   }
 
   Future<void> _launchFacebookURL(String fb) async {
-    final Uri url = Uri.parse(fb);
-    try {
-      await launchUrl(url);
-    } catch (e) {
-      print('Error launching URL: $e');
-    }
+    await _launchUri(Uri.parse(fb));
   }
 
   Future<void> _launchMHURL(String mh) async {
-    final Uri url = Uri.parse(mh);
-    try {
-      await launchUrl(url);
-    } catch (e) {
-      print('Error launching URL: $e');
-    }
+    await _launchUri(Uri.parse(mh));
   }
 
   Future<void> _launchLinkedInURL(String ln) async {
-    final Uri url = Uri.parse(ln);
-    try {
-      await launchUrl(url);
-    } catch (e) {
-      print('Error launching URL: $e');
-    }
+    await _launchUri(Uri.parse(ln));
   }
 
   Future<void> _launchInstaGramURL(String ig) async {
-    final Uri url = Uri.parse(ig);
+    await _launchUri(Uri.parse(ig));
+  }
+
+  Future<void> _launchUri(Uri uri) async {
     try {
-      await launchUrl(url);
-    } catch (e) {
-      print('Error launching URL: $e');
+      if (await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      )) {
+        return;
+      }
+
+      if (await launchUrl(uri, mode: LaunchMode.platformDefault)) {
+        return;
+      }
+
+      _showLaunchError();
+    } catch (e, stackTrace) {
+      debugPrint('Error launching URL: $e');
+      debugPrintStack(stackTrace: stackTrace);
+      _showLaunchError();
     }
+  }
+
+  void _showLaunchError() {
+    if (!mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Could not open the requested link.')),
+    );
   }
 
   @override
@@ -188,7 +193,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                       Text(
-                        "Thank you for downloading the app, leave a review if you like it.",
+                        "New routes are coming soon! Stay tuned for updates.",
                         style: TextStyle(
                           fontSize: 11.0,
                           fontWeight: FontWeight.w500,
@@ -213,11 +218,13 @@ class _HomeState extends State<Home> {
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
                     color: isDark
-                        ? const Color(0xFF388E3C).withValues(alpha: 0.3)
+                        ? const Color.fromARGB(255, 18, 75, 21).withValues(alpha: 0.3)
                         : theme.colorScheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12.0),
                     border: Border.all(
-                      color: theme.colorScheme.primary,
+                      color: isDark
+                                  ? const Color.fromARGB(204, 181, 181, 181)
+                                  : theme.colorScheme.primary,
                       width: 2.0,
                     ),
                   ),
@@ -243,7 +250,7 @@ class _HomeState extends State<Home> {
                             style: TextStyle(
                               fontSize: 15.0,
                               color: isDark
-                                  ? Colors.white.withValues(alpha: 0.6)
+                                  ? AppTheme.darkTextColor
                                   : theme.colorScheme.primary,
                             ),
                           ),
@@ -276,11 +283,13 @@ class _HomeState extends State<Home> {
                         padding: const EdgeInsets.all(16.0),
                         decoration: BoxDecoration(
                           color: isDark
-                              ? theme.colorScheme.surface
-                              : theme.colorScheme.primary.withValues(alpha: 0.1),
+                        ? const Color.fromARGB(255, 18, 75, 21).withValues(alpha: 0.3)
+                        : theme.colorScheme.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12.0),
                           border: Border.all(
-                            color: theme.colorScheme.primary,
+                            color: isDark
+                                  ? const Color.fromARGB(204, 181, 181, 181)
+                                  : theme.colorScheme.primary,
                             width: 2.0,
                           ),
                         ),
@@ -295,13 +304,17 @@ class _HomeState extends State<Home> {
                                   style: TextStyle(
                                     fontSize: 20.0,
                                     fontWeight: FontWeight.bold,
-                                    color: theme.colorScheme.primary,
+                                    color: isDark
+                                  ? AppTheme.darkTextColor
+                                  : theme.colorScheme.primary,
                                   ),
                                 ),
                                 Icon(
                                   Icons.directions_bus,
                                   size: 30.0,
-                                  color: theme.colorScheme.primary,
+                                  color: isDark
+                                  ? AppTheme.darkTextColor
+                                  : theme.colorScheme.primary,
                                 ),
                               ],
                             ),
@@ -310,7 +323,9 @@ class _HomeState extends State<Home> {
                               'Click to view all routes in one page',
                               style: TextStyle(
                                 fontSize: 14.0,
-                                color: theme.colorScheme.primary,
+                                color: isDark
+                                    ? AppTheme.darkTextColor
+                                    : theme.colorScheme.primary,
                               ),
                             ),
                           ],
@@ -325,18 +340,22 @@ class _HomeState extends State<Home> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (ctx) => EmergencyPage()),
+                          MaterialPageRoute(
+                            builder: (ctx) => const EmergencyPage(),
+                          ),
                         );
                       },
                       child: Container(
                         padding: const EdgeInsets.all(16.0),
                         decoration: BoxDecoration(
                           color: isDark
-                              ? theme.colorScheme.surface
-                              : theme.colorScheme.primary.withValues(alpha: 0.1),
+                        ? const Color.fromARGB(255, 18, 75, 21).withValues(alpha: 0.3)
+                        : theme.colorScheme.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12.0),
                           border: Border.all(
-                            color: theme.colorScheme.primary,
+                            color: isDark
+                                  ? const Color.fromARGB(204, 181, 181, 181)
+                                  : theme.colorScheme.primary,
                             width: 2.0,
                           ),
                         ),
@@ -351,13 +370,17 @@ class _HomeState extends State<Home> {
                                   style: TextStyle(
                                     fontSize: 20.0,
                                     fontWeight: FontWeight.bold,
-                                    color: theme.colorScheme.primary,
+                                    color: isDark
+                                        ? AppTheme.darkTextColor
+                                        : theme.colorScheme.primary,
                                   ),
                                 ),
                                 Icon(
                                   Icons.warning,
                                   size: 30.0,
-                                  color: theme.colorScheme.primary,
+                                  color: isDark
+                                      ? AppTheme.darkTextColor
+                                      :  theme.colorScheme.primary,
                                 ),
                               ],
                             ),
@@ -366,7 +389,9 @@ class _HomeState extends State<Home> {
                               'Click to see emergency contacts',
                               style: TextStyle(
                                 fontSize: 14.0,
-                                color: theme.colorScheme.primary,
+                                color: isDark
+                                  ? AppTheme.darkTextColor
+                                  : theme.colorScheme.primary,
                               ),
                             ),
                           ],
@@ -382,11 +407,13 @@ class _HomeState extends State<Home> {
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? theme.colorScheme.surface
+                      ? const Color.fromARGB(255, 18, 75, 21).withValues(alpha: 0.3)
                       : theme.colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12.0),
                   border: Border.all(
-                    color: theme.colorScheme.primary,
+                    color: isDark
+                                  ? const Color.fromARGB(204, 181, 181, 181)
+                                  : theme.colorScheme.primary,
                     width: 2.0,
                   ),
                 ),
@@ -397,7 +424,9 @@ class _HomeState extends State<Home> {
                       style: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary,
+                        color: isDark
+                            ? AppTheme.darkTextColor
+                            : theme.colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 8.0),
@@ -415,7 +444,12 @@ class _HomeState extends State<Home> {
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                       ),
-                      child: const Text('Tutorial Video'),
+                      child: Text('Tutorial Video',
+                          style: TextStyle(
+                            fontSize: 16.0, 
+                            color: isDark
+                                  ? AppTheme.darkTextColor
+                                  : theme.colorScheme.primary)),
                     ),
                   ],
                 ),
@@ -426,11 +460,13 @@ class _HomeState extends State<Home> {
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? theme.colorScheme.surface
+                      ? const Color.fromARGB(255, 18, 75, 21).withValues(alpha: 0.3)
                       : theme.colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12.0),
                   border: Border.all(
-                    color: theme.colorScheme.primary,
+                    color: isDark
+                                  ? const Color.fromARGB(204, 181, 181, 181)
+                                  : theme.colorScheme.primary,
                     width: 2.0,
                   ),
                 ),
@@ -441,7 +477,9 @@ class _HomeState extends State<Home> {
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary,
+                        color: isDark
+                            ? AppTheme.darkTextColor
+                            : theme.colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 20.0),
@@ -466,7 +504,7 @@ class _HomeState extends State<Home> {
                           'https://www.facebook.com/shamiulhossensanto',
                           'https://www.instagram.com/samiul.hossen/',
                           'https://www.linkedin.com/in/samiul-hossen/',
-                          'https://sites.google.com/view/samiul-hossen-sarkar-santo/about-me',
+                          'https://samiul-hossen-sarkar-santo.web.app/',
                         ),
                       ],
                     ),

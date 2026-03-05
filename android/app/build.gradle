@@ -14,10 +14,19 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+def mapsApiKey = localProperties.getProperty('MAPS_API_KEY', System.getenv('MAPS_API_KEY') ?: '')
+
 android {
     namespace = "com.bus_tracker_user_app.app"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    compileSdk = 36
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -38,9 +47,10 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = 7
-        versionName = "1.0.7"
+        targetSdk = 36
+        versionCode = 11
+        versionName = "2.0.1"
+        manifestPlaceholders += [GOOGLE_MAPS_API_KEY: mapsApiKey]
     }
 
     signingConfigs {

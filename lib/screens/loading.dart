@@ -1,11 +1,12 @@
 import 'package:bus_tracker_user_app/main_screen.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
 
   @override
-  _LoadingScreenState createState() => _LoadingScreenState();
+  State<LoadingScreen> createState() => _LoadingScreenState();
 }
 
 class _LoadingScreenState extends State<LoadingScreen>
@@ -14,6 +15,7 @@ class _LoadingScreenState extends State<LoadingScreen>
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
   late Animation<double> _morphAnimation;
+  Timer? _navigationTimer;
 
   @override
   void initState() {
@@ -45,16 +47,20 @@ class _LoadingScreenState extends State<LoadingScreen>
     _animationController.forward();
 
     // Schedule the transition to HomeScreen
-    Future.delayed(const Duration(seconds: 4), () {
+    _navigationTimer = Timer(const Duration(seconds: 4), () {
+      if (!mounted) {
+        return;
+      }
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => MainScreen()),
+        MaterialPageRoute(builder: (context) => const MainScreen()),
       );
     });
   }
 
   @override
   void dispose() {
+    _navigationTimer?.cancel();
     _animationController.dispose();
     super.dispose();
   }

@@ -1,0 +1,21 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "Buses": {
+      ".read": true,
+      "$busId": {
+        ".write": "auth != null && (auth.token.admin === true || auth.token.operator === true)",
+        "location": {
+          ".validate": "newData.hasChildren(['lat', 'long']) && newData.child('lat').isNumber() && newData.child('lat').val() >= -90 && newData.child('lat').val() <= 90 && newData.child('long').isNumber() && newData.child('long').val() >= -180 && newData.child('long').val() <= 180"
+        },
+        "status": {
+          ".validate": "newData.isBoolean()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    }
+  }
+}

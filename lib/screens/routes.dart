@@ -15,8 +15,28 @@ class Routes extends StatefulWidget {
 }
 
 class _RoutesState extends State<Routes> {
+  static const String _fallbackImageAsset =
+      "assets/images/BUP_BUS_TRACKER_LOGO.png";
+  static const Set<String> _availableRouteImages = {
+    "BUS_ROUTE_STD-0.png",
+    "BUS_ROUTE_STD-1.png",
+    "BUS_ROUTE_STD-2.png",
+    "BUS_ROUTE_STD-3.png",
+    "BUS_ROUTE_STD-4.png",
+    "BUS_ROUTE_STD-5.png",
+    "BUS_ROUTE_STD-6.png",
+  };
+
+  String _resolveRouteImageAsset(String imageName) {
+    if (_availableRouteImages.contains(imageName)) {
+      return "assets/images/$imageName";
+    }
+    return _fallbackImageAsset;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -37,11 +57,15 @@ class _RoutesState extends State<Routes> {
             child: Container(
               margin: const EdgeInsets.all(8.0),
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: isDark
+                    ? const Color.fromARGB(255, 0, 0, 0).withValues(alpha: 0.3)
+                    : Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12.0),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
+                    color: isDark
+                        ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)
+                        : Colors.grey.withValues(alpha: 0.3),
                     spreadRadius: 2,
                     blurRadius: 5,
                   ),
@@ -50,29 +74,23 @@ class _RoutesState extends State<Routes> {
               child: widget.routeModel.image.isNotEmpty
                   ? Column(
                       children: [
-                        const SizedBox(
-                          height: 25,
-                        ),
-                        Text(
-                          'Route Image',
-                          style: TextStyle(
-                            color: Colors.green[900],
-                            fontWeight: FontWeight.w900,
-                            fontSize: 24,
-                          ),
-                        ),
                         Expanded(
                           child: InteractiveViewer(
                             panEnabled: true, // Enable panning
                             minScale: 0.75, // Minimum zoom scale
                             maxScale: 5.0, // Maximum zoom scale
                             child: Image.asset(
-                              "assets/images/${widget.routeModel.image}",
+                              _resolveRouteImageAsset(widget.routeModel.image),
                               errorBuilder: (context, error, stackTrace) {
                                 debugPrint(
                                     "Error loading image: ${widget.routeModel.image}");
-                                return const Center(
-                                  child: Text("Image not available"),
+                                return Image.asset(
+                                  _fallbackImageAsset,
+                                  fit: BoxFit.fitWidth,
+                                  errorBuilder: (context, _, __) =>
+                                      const Center(
+                                    child: Text("Image not available"),
+                                  ),
                                 );
                               },
                               fit: BoxFit
@@ -117,7 +135,6 @@ class _RoutesState extends State<Routes> {
                             ),
                           ),
                         );
-                        print("tapped on view on map button");
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green[800],

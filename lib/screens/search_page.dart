@@ -5,7 +5,7 @@ class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
 
   @override
-  _SearchPageState createState() => _SearchPageState();
+  State<SearchPage> createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
@@ -23,6 +23,12 @@ class _SearchPageState extends State<SearchPage> {
     super.initState();
     // Initially show all routes
     filteredRoutes = allRoutes;
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   // Function to filter routes based on stoppage name

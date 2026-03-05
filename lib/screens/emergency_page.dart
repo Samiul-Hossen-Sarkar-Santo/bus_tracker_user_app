@@ -7,7 +7,6 @@ class EmergencyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
@@ -22,7 +21,7 @@ class EmergencyPage extends StatelessWidget {
           _buildEmergencyContactCard(
             context,
             'Call BUP Security Cell',
-            '+8801748271902',
+            '+8801769028787',
             theme.colorScheme.primary,
           ),
           const SizedBox(height: 20),
@@ -52,11 +51,24 @@ class EmergencyPage extends StatelessWidget {
 
     return GestureDetector(
       onTap: () async {
+        final messenger = ScaffoldMessenger.of(context);
         final Uri url = Uri.parse('tel:$phoneNumber');
         try {
-          await launchUrl(url);
-        } catch (e) {
-          print('Error launching URL: $e');
+          if (!await canLaunchUrl(url)) {
+            _showCallError(messenger);
+            return;
+          }
+          final didLaunch = await launchUrl(
+            url,
+            mode: LaunchMode.externalApplication,
+          );
+          if (!didLaunch) {
+            _showCallError(messenger);
+          }
+        } catch (e, stackTrace) {
+          debugPrint('Error launching dialer: $e');
+          debugPrintStack(stackTrace: stackTrace);
+          _showCallError(messenger);
         }
       },
       child: Container(
@@ -101,6 +113,12 @@ class EmergencyPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showCallError(ScaffoldMessengerState messenger) {
+    messenger.showSnackBar(
+      const SnackBar(content: Text('Could not open the phone dialer.')),
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -6,10 +8,10 @@ import 'package:location/location.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AllRoutesPage extends StatefulWidget {
-  const AllRoutesPage({Key? key}) : super(key: key);
+  const AllRoutesPage({super.key});
 
   @override
-  _AllRoutesPageState createState() => _AllRoutesPageState();
+  State<AllRoutesPage> createState() => _AllRoutesPageState();
 }
 
 class _AllRoutesPageState extends State<AllRoutesPage> {
@@ -21,6 +23,7 @@ class _AllRoutesPageState extends State<AllRoutesPage> {
   BitmapDescriptor busMarker = BitmapDescriptor.defaultMarker;
   BitmapDescriptor bupMarker = BitmapDescriptor.defaultMarker;
   BitmapDescriptor endMarker = BitmapDescriptor.defaultMarker;
+  final List<StreamSubscription<DatabaseEvent>> _subscriptions = [];
 
   void _zoomToFit() {
     if (_mapController == null) return;
@@ -65,24 +68,34 @@ class _AllRoutesPageState extends State<AllRoutesPage> {
   }
 
   Future<void> _loadCustomIcons() async {
-    busMarker = await BitmapDescriptor.asset(
-      const ImageConfiguration(),
-      "assets/images/Bus_marker.png",
-      height: 48.0,
-      width: 40.0,
-    );
-    bupMarker = await BitmapDescriptor.asset(
-      const ImageConfiguration(),
-      "assets/images/BUP_marker.png",
-      height: 48.0,
-      width: 40.0,
-    );
-    endMarker = await BitmapDescriptor.asset(
-      const ImageConfiguration(),
-      "assets/images/End_marker.png",
-      height: 48.0,
-      width: 40.0,
-    );
+    try {
+      busMarker = await BitmapDescriptor.asset(
+        const ImageConfiguration(),
+        "assets/images/Bus_marker.png",
+        height: 48.0,
+        width: 40.0,
+      );
+      bupMarker = await BitmapDescriptor.asset(
+        const ImageConfiguration(),
+        "assets/images/BUP_marker.png",
+        height: 48.0,
+        width: 40.0,
+      );
+      endMarker = await BitmapDescriptor.asset(
+        const ImageConfiguration(),
+        "assets/images/End_marker.png",
+        height: 48.0,
+        width: 40.0,
+      );
+    } catch (e, stackTrace) {
+      debugPrint("Custom marker load failed, using defaults: $e");
+      debugPrintStack(stackTrace: stackTrace);
+      endMarker =
+          BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta);
+    }
+    if (!mounted) {
+      return;
+    }
     setState(() {});
   }
 
@@ -111,7 +124,7 @@ class _AllRoutesPageState extends State<AllRoutesPage> {
   }
 
   void _listenToBusLocations() {
-    final DatabaseReference _database = FirebaseDatabase.instanceFor(
+    final DatabaseReference database = FirebaseDatabase.instanceFor(
       app: FirebaseDatabase.instance.app,
       databaseURL:
           "https://bus-tracker-bbaa6-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -121,7 +134,7 @@ class _AllRoutesPageState extends State<AllRoutesPage> {
       final routeId = route.title;
 
       for (final busId in route.busId) {
-        _database.child(busId).onValue.listen(
+        final subscription = database.child(busId).onValue.listen(
           (event) {
             final data = event.snapshot.value as Map<dynamic, dynamic>?;
             if (data != null &&
@@ -130,8 +143,14 @@ class _AllRoutesPageState extends State<AllRoutesPage> {
                 data['status'] == true) {
               final location = data['location'] as Map<dynamic, dynamic>;
               if (location.containsKey('lat') && location.containsKey('long')) {
+                final num? lat = location['lat'] as num?;
+                final num? long = location['long'] as num?;
+                if (lat == null || long == null) {
+                  return;
+                }
+
                 final LatLng busPosition =
-                    LatLng(location['lat'], location['long']);
+                    LatLng(lat.toDouble(), long.toDouble());
                 final busMarker = Marker(
                   markerId: MarkerId(busId),
                   position: busPosition,
@@ -139,6 +158,9 @@ class _AllRoutesPageState extends State<AllRoutesPage> {
                   icon: this.busMarker,
                 );
 
+                if (!mounted) {
+                  return;
+                }
                 setState(() {
                   if (!_busMarkers.containsKey(routeId)) {
                     _busMarkers[routeId] = [];
@@ -154,6 +176,9 @@ class _AllRoutesPageState extends State<AllRoutesPage> {
               }
             } else {
               // If status is false or invalid, remove the marker for this bus
+              if (!mounted) {
+                return;
+              }
               setState(() {
                 _busMarkers[routeId]
                     ?.removeWhere((marker) => marker.markerId.value == busId);
@@ -161,9 +186,10 @@ class _AllRoutesPageState extends State<AllRoutesPage> {
             }
           },
           onError: (error) {
-            print("Error listening to data for bus $busId: $error");
+            debugPrint("Error listening to data for bus $busId: $error");
           },
         );
+        _subscriptions.add(subscription);
       }
     }
   }
@@ -208,7 +234,6 @@ class _AllRoutesPageState extends State<AllRoutesPage> {
   }
 
   late Location _location;
-  // ignore: unused_field
   LatLng? _userLocation;
   LatLng? _selectedLocation;
   // To control the visibility of the text bubble
@@ -229,26 +254,47 @@ class _AllRoutesPageState extends State<AllRoutesPage> {
       }
 
       final locationData = await _location.getLocation();
+      if (!mounted ||
+          locationData.latitude == null ||
+          locationData.longitude == null) {
+        return;
+      }
       setState(() {
         _userLocation = LatLng(locationData.latitude!, locationData.longitude!);
       });
-    } catch (e) {
-      print("Error retrieving location: $e");
+    } catch (e, stackTrace) {
+      debugPrint("Error retrieving location: $e");
+      debugPrintStack(stackTrace: stackTrace);
     }
   }
 
   Future<void> _openGoogleMaps(LatLng destination) async {
-    if (_userLocation != null) {
-      String googleMapsUrl =
-          "https://www.google.com/maps/dir/?api=1&origin=${_userLocation!.latitude},${_userLocation!.longitude}&destination=${destination.latitude},${destination.longitude}&travelmode=driving";
+    if (_userLocation == null) {
+      _showTransientMessage('Current location is not available yet.');
+      return;
+    }
 
-      final Uri googleMapsUri = Uri.parse(googleMapsUrl);
+    final String googleMapsUrl =
+        "https://www.google.com/maps/dir/?api=1&origin=${_userLocation!.latitude},${_userLocation!.longitude}&destination=${destination.latitude},${destination.longitude}&travelmode=driving";
 
-      if (await canLaunchUrl(googleMapsUri)) {
-        await launchUrl(googleMapsUri);
-      } else {
-        throw "Could not open Google Maps.";
+    final Uri googleMapsUri = Uri.parse(googleMapsUrl);
+
+    try {
+      if (!await canLaunchUrl(googleMapsUri)) {
+        _showTransientMessage('Could not open Google Maps on this device.');
+        return;
       }
+      final bool launched = await launchUrl(
+        googleMapsUri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (!launched) {
+        _showTransientMessage('Could not open Google Maps on this device.');
+      }
+    } catch (e, stackTrace) {
+      debugPrint("Could not open Google Maps: $e");
+      debugPrintStack(stackTrace: stackTrace);
+      _showTransientMessage('Could not open Google Maps on this device.');
     }
   }
 
@@ -348,11 +394,11 @@ class _AllRoutesPageState extends State<AllRoutesPage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.green.withOpacity(0.7),
+            color: Colors.green.withValues(alpha: 0.7),
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 0.5),
                 blurRadius: 2,
                 offset: const Offset(0, 2),
               ),
@@ -392,6 +438,24 @@ class _AllRoutesPageState extends State<AllRoutesPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _zoomToFit();
     });
+  }
+
+  void _showTransientMessage(String message) {
+    if (!mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  @override
+  void dispose() {
+    for (final subscription in _subscriptions) {
+      subscription.cancel();
+    }
+    _mapController?.dispose();
+    super.dispose();
   }
 
   @override
