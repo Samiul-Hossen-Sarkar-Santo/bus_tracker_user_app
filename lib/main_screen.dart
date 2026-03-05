@@ -4,6 +4,7 @@ import 'package:bus_tracker_user_app/screens/route_details.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:bus_tracker_user_app/theme/app_theme.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -83,6 +84,9 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       body: PageView(
         controller: _pageController,
@@ -115,9 +119,15 @@ class _MainScreenState extends State<MainScreen> {
             label: 'All Routes',
           ),
         ],
-        selectedItemColor: Colors.green[900],
-        unselectedItemColor: Colors.grey,
-        backgroundColor: Colors.white,
+        selectedItemColor: isDark
+            ? const Color.fromARGB(255, 0, 205, 10)
+            : AppTheme.primaryGreen,
+        unselectedItemColor:
+            isDark ? const Color.fromARGB(255, 1, 124, 9) : Colors.grey,
+        backgroundColor:
+            isDark ? const Color.fromARGB(255, 20, 81, 24) : Colors.white,
+        type: BottomNavigationBarType.fixed,
+        elevation: 8,
       ),
     );
   }

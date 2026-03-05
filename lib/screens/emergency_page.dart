@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EmergencyPage extends StatelessWidget {
+  const EmergencyPage({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Emergency Contacts',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.green[900],
-        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text('Emergency Contacts'),
         centerTitle: true,
       ),
       body: Column(
@@ -23,21 +23,21 @@ class EmergencyPage extends StatelessWidget {
             context,
             'Call BUP Security Cell',
             '+8801748271902',
-            Colors.green[500]!,
+            theme.colorScheme.primary,
           ),
           const SizedBox(height: 20),
           _buildEmergencyContactCard(
             context,
             'Call 999',
             '999',
-            Colors.green[500]!,
+            theme.colorScheme.primary,
           ),
           const SizedBox(height: 20),
           _buildEmergencyContactCard(
             context,
             'Call Fire Service',
             '102',
-            Colors.green[500]!,
+            theme.colorScheme.primary,
           ),
           const SizedBox(height: 20),
         ],
@@ -47,86 +47,60 @@ class EmergencyPage extends StatelessWidget {
 
   Widget _buildEmergencyContactCard(
       BuildContext context, String title, String phoneNumber, Color color) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return GestureDetector(
-      onTap: () => _confirmCall(context, phoneNumber, title),
-      child: Center(
-        child: Container(
-          alignment: Alignment.center,
-          width: 300,
-          height: 100,
-          padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            color: Colors.green[500],
-            borderRadius: BorderRadius.circular(8),
+      onTap: () async {
+        final Uri url = Uri.parse('tel:$phoneNumber');
+        try {
+          await launchUrl(url);
+        } catch (e) {
+          print('Error launching URL: $e');
+        }
+      },
+      child: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: isDark
+              ? theme.colorScheme.surface
+              : theme.colorScheme.primary.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: theme.colorScheme.primary,
+            width: 2,
           ),
-          child: Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+          boxShadow: [
+            BoxShadow(
+              color: theme.colorScheme.primary.withValues(alpha: 0.2),
+              blurRadius: 5,
+              offset: const Offset(0, 2),
             ),
-            textAlign: TextAlign.center,
-          ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              phoneNumber,
+              style: TextStyle(
+                fontSize: 16,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+          ],
         ),
       ),
     );
-  }
-
-  Future<void> _confirmCall(
-      BuildContext context, String phoneNumber, String title) async {
-    final shouldCall = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.grey[900],
-        elevation: 18,
-        shadowColor: Colors.green[500],
-        title: const Text(
-          "Make a Call?",
-          style: TextStyle(color: Colors.white),
-        ),
-        contentPadding: const EdgeInsets.all(20),
-        content: Text(
-          "Are You Sure You Want To $title?",
-          style: const TextStyle(color: Colors.white70, fontSize: 16),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx, false); // Close dialog with "false"
-            },
-            child: const Text(
-              "Cancel",
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx, true); // Close dialog with "true"
-            },
-            child: const Text(
-              "Call",
-              style: TextStyle(color: Colors.green),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (shouldCall == true) {
-      _makePhoneCall(phoneNumber);
-    }
-  }
-
-  void _makePhoneCall(String phoneNumber) async {
-    final Uri launchUri = Uri(
-      scheme: 'tel',
-      path: phoneNumber,
-    );
-    if (await canLaunchUrl(launchUri)) {
-      await launchUrl(launchUri);
-    } else {
-      throw 'Could not launch $phoneNumber';
-    }
   }
 }

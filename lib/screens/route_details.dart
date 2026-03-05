@@ -1,5 +1,6 @@
 import 'package:bus_tracker_user_app/models/route_model.dart';
 import 'package:bus_tracker_user_app/screens/routes.dart';
+import 'package:bus_tracker_user_app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class RouteDetails extends StatefulWidget {
@@ -16,6 +17,9 @@ class _RouteDetailsState extends State<RouteDetails> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     // Filtered list of routes based on the search query
     final filteredRoutes = RouteModel.values.where((route) {
       return searchQuery.isEmpty ||
@@ -26,15 +30,11 @@ class _RouteDetailsState extends State<RouteDetails> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Routes',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.green[900],
+        title: const Text('Routes'),
         centerTitle: true,
-        iconTheme: const IconThemeData(
-          color: Colors.white, // Back button color
-        ),
+        backgroundColor:
+            isDark ? AppTheme.primaryGreen : theme.colorScheme.primary,
+        foregroundColor: isDark ? Colors.white : theme.colorScheme.onPrimary,
       ),
       body: Column(
         children: [
@@ -50,42 +50,41 @@ class _RouteDetailsState extends State<RouteDetails> {
               },
               decoration: InputDecoration(
                 hintText: 'Search for routes or stops...',
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon:
+                    Icon(Icons.search, color: theme.colorScheme.primary),
                 suffixIcon: searchQuery.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear),
+                        icon:
+                            Icon(Icons.clear, color: theme.colorScheme.primary),
                         onPressed: () {
-                          // Clear search field and reset state
                           searchController.clear();
                           setState(() {
                             searchQuery = '';
                           });
                         },
                       )
-                    : null, // Show clear button only if searchQuery is not empty
+                    : null,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: isDark ? theme.colorScheme.surface : Colors.white,
               ),
             ),
           ),
-          // Grid layout for filtered bus routes
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // 2 cards per row
+                  crossAxisCount: 2,
                   mainAxisSpacing: 16.0,
                   crossAxisSpacing: 10.0,
-                  childAspectRatio: 3 / 2, // Aspect ratio for cards
+                  childAspectRatio: 3 / 2,
                 ),
                 itemCount: filteredRoutes.length,
                 itemBuilder: (context, index) {
                   final route = filteredRoutes[index];
-
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -100,12 +99,16 @@ class _RouteDetailsState extends State<RouteDetails> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
-                      color: Colors.green[50],
+                      color: isDark
+                          ? const Color(0xFF388E3C).withOpacity(0.7)
+                          : Colors.green[50],
                       child: Center(
                         child: Text(
                           route.title,
                           style: TextStyle(
-                            color: Colors.green[800],
+                            color: isDark
+                                ? Colors.white
+                                : theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,
                             fontSize: 17.0,
                           ),
@@ -120,7 +123,6 @@ class _RouteDetailsState extends State<RouteDetails> {
           ),
         ],
       ),
-      backgroundColor: Colors.grey[200],
     );
   }
 }

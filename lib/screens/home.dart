@@ -1,5 +1,6 @@
 import 'package:bus_tracker_user_app/screens/all_routes.dart';
 import 'package:bus_tracker_user_app/screens/emergency_page.dart';
+import 'package:bus_tracker_user_app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:bus_tracker_user_app/screens/route_details.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -121,22 +122,23 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green[900],
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'BUP Bus Tracker',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text('BUP Bus Tracker'),
         centerTitle: true,
+        backgroundColor:
+            isDark ? AppTheme.primaryGreen : theme.colorScheme.primary,
+        foregroundColor: isDark ? Colors.white : theme.colorScheme.onPrimary,
         actions: [
           IconButton(
             icon: Icon(
               context.watch<ThemeProvider>().isDarkMode
                   ? Icons.light_mode
                   : Icons.dark_mode,
+              color: isDark ? Colors.white : theme.colorScheme.onPrimary,
             ),
             onPressed: () {
               context.read<ThemeProvider>().toggleTheme();
@@ -155,39 +157,44 @@ class _HomeState extends State<Home> {
                 child: Container(
                   margin: const EdgeInsets.only(top: 16.0),
                   padding: const EdgeInsets.only(
-                      left: 16.0, top: 3.0, bottom: 4.0, right: 16.0),
+                      left: 16.0, right: 16.0, bottom: 16, top: 8),
                   decoration: BoxDecoration(
-                    color: Colors.orange[100],
+                    color: isDark ? Colors.transparent : Colors.orange[100],
                     borderRadius: BorderRadius.circular(12.0),
                     border: Border.all(
-                      color: Colors.orange[700]!,
-                      width: 2.0,
+                      color: isDark ? Colors.orange[800]! : Colors.orange[700]!,
+                      width: 1.5,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: isDark
+                            ? Colors.black.withValues(alpha: 0.3)
+                            : Colors.orange[200]!.withValues(alpha: 0.2),
+                        blurRadius: 4.0,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        """Notice""",
+                        "Notice",
                         style: TextStyle(
                           fontSize: 13.0,
                           fontWeight: FontWeight.bold,
-                          color: Colors.orange[900],
-                          shadows: const [
-                            Shadow(
-                              color: Colors.black12,
-                              offset: Offset(1, 1),
-                              blurRadius: 5.0,
-                            ),
-                          ],
+                          color:
+                              isDark ? Colors.orange[200] : Colors.orange[900],
                         ),
                       ),
                       Text(
-                        """Thank you for downloading the app, leave a review if you like it.""",
+                        "Thank you for downloading the app, leave a review if you like it.",
                         style: TextStyle(
                           fontSize: 11.0,
                           fontWeight: FontWeight.w500,
-                          color: Colors.orange[900],
+                          color: isDark ? Colors.white : Colors.orange[900],
                         ),
+                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),
@@ -203,13 +210,14 @@ class _HomeState extends State<Home> {
                   );
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 40.0, horizontal: 16.0),
+                  padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
-                    color: Colors.green[100],
+                    color: isDark
+                        ? const Color(0xFF388E3C).withValues(alpha: 0.3)
+                        : theme.colorScheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12.0),
                     border: Border.all(
-                      color: Colors.green[700]!,
+                      color: theme.colorScheme.primary,
                       width: 2.0,
                     ),
                   ),
@@ -224,21 +232,28 @@ class _HomeState extends State<Home> {
                             style: TextStyle(
                               fontSize: 30.0,
                               fontWeight: FontWeight.bold,
-                              color: Colors.green[900],
+                              color: isDark
+                                  ? AppTheme.darkTextColor
+                                  : theme.colorScheme.primary,
                             ),
                           ),
                           const SizedBox(height: 10.0),
                           Text(
                             'Click to search for your route',
                             style: TextStyle(
-                                fontSize: 15.0, color: Colors.green[700]),
+                              fontSize: 15.0,
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.6)
+                                  : theme.colorScheme.primary,
+                            ),
                           ),
                         ],
                       ),
                       Icon(
                         Icons.bus_alert,
                         size: 60.0,
-                        color: Colors.green[900],
+                        color:
+                            isDark ? Colors.white : theme.colorScheme.primary,
                       ),
                     ],
                   ),
@@ -257,58 +272,49 @@ class _HomeState extends State<Home> {
                               builder: (ctx) => const AllRoutesPage()),
                         );
                       },
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          return Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 30.0, horizontal: 14.5),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12.0),
-                              border: Border.all(
-                                color: Colors.green[700]!,
-                                width: 2.0,
-                              ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Container(
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? theme.colorScheme.surface
+                              : theme.colorScheme.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12.0),
+                          border: Border.all(
+                            color: theme.colorScheme.primary,
+                            width: 2.0,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'All Routes!',
-                                      style: TextStyle(
-                                        fontSize: constraints.maxWidth * 0.12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.green[900],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: constraints.maxWidth * 0.028,
-                                    ),
-                                    Icon(
-                                      Icons.directions_bus,
-                                      size: constraints.maxWidth * 0.16,
-                                      color: Colors.green[900],
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: constraints.maxWidth * 0.05,
-                                ),
                                 Text(
-                                  'Click to view all routes in one page',
+                                  'All Routes!',
                                   style: TextStyle(
-                                    fontSize: constraints.maxWidth * 0.07,
-                                    color: Colors.green[700],
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.colorScheme.primary,
                                   ),
-                                  textAlign: TextAlign.start,
+                                ),
+                                Icon(
+                                  Icons.directions_bus,
+                                  size: 30.0,
+                                  color: theme.colorScheme.primary,
                                 ),
                               ],
                             ),
-                          );
-                        },
+                            const SizedBox(height: 8.0),
+                            Text(
+                              'Click to view all routes in one page',
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -322,57 +328,49 @@ class _HomeState extends State<Home> {
                           MaterialPageRoute(builder: (ctx) => EmergencyPage()),
                         );
                       },
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          return Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 30.0, horizontal: 14.5),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12.0),
-                              border: Border.all(
-                                color: Colors.green[700]!,
-                                width: 2.0,
-                              ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Container(
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? theme.colorScheme.surface
+                              : theme.colorScheme.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12.0),
+                          border: Border.all(
+                            color: theme.colorScheme.primary,
+                            width: 2.0,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Emergency!',
-                                      style: TextStyle(
-                                        fontSize: constraints.maxWidth * 0.115,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.green[900],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: constraints.maxWidth * 0.028,
-                                    ),
-                                    Icon(
-                                      Icons.warning,
-                                      size: constraints.maxWidth * 0.14,
-                                      color: Colors.green[900],
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: constraints.maxWidth * 0.05,
-                                ),
                                 Text(
-                                  'Click to see emergency contacts',
+                                  'Emergency!',
                                   style: TextStyle(
-                                      fontSize: constraints.maxWidth * 0.07,
-                                      color: Colors.green[700]),
-                                  textAlign: TextAlign.start,
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.warning,
+                                  size: 30.0,
+                                  color: theme.colorScheme.primary,
                                 ),
                               ],
                             ),
-                          );
-                        },
+                            const SizedBox(height: 8.0),
+                            Text(
+                              'Click to see emergency contacts',
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -383,46 +381,41 @@ class _HomeState extends State<Home> {
               Container(
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
+                  color: isDark
+                      ? theme.colorScheme.surface
+                      : theme.colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12.0),
                   border: Border.all(
-                    color: Colors.green[700]!,
+                    color: theme.colorScheme.primary,
                     width: 2.0,
                   ),
                 ),
                 child: Column(
                   children: [
-                    Center(
-                      child: Text(
-                        'Confused on how to use the app?',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green[700],
-                        ),
+                    Text(
+                      'Confused on how to use the app?',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 8.0),
-                    Center(
-                      child: Text(
-                        'Watch this video tutorial to learn how to navigate the app.',
-                        style: TextStyle(color: Colors.grey[600]),
-                      ),
+                    Text(
+                      'Watch this video tutorial to learn how to navigate the app.',
+                      style: TextStyle(color: theme.colorScheme.onSurface),
                     ),
                     const SizedBox(height: 16.0),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: _launchURL,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green[500],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                        ),
-                        child: const Text(
-                          'Tutorial Video',
-                          style: TextStyle(color: Colors.white),
+                    ElevatedButton(
+                      onPressed: _launchURL,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: theme.colorScheme.onPrimary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                       ),
+                      child: const Text('Tutorial Video'),
                     ),
                   ],
                 ),
@@ -430,82 +423,50 @@ class _HomeState extends State<Home> {
               const SizedBox(height: 16.0),
               // Meet the Team Section
               Container(
-                padding: const EdgeInsets.all(6.0),
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? theme.colorScheme.surface
+                      : theme.colorScheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12.0),
+                  border: Border.all(
+                    color: theme.colorScheme.primary,
+                    width: 2.0,
+                  ),
+                ),
                 child: Column(
                   children: [
-                    Center(
-                      child: Text(
-                        'Meet the Team',
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green[900],
-                        ),
+                    Text(
+                      'Meet the Team',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 20.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                _showTeamMemberDetails(
-                                  context,
-                                  'Mohsin',
-                                  'assets/images/mohsin.png',
-                                  'Backend Developer and Data Analyst',
-                                  'https://www.facebook.com/mohsinsrj03',
-                                  'https://www.instagram.com/vallagena_kichu/',
-                                  'https://www.linkedin.com/in/mohsinsiraj03/',
-                                  'https://sites.google.com/view/mohsinsiraj',
-                                );
-                              },
-                              child: const CircleAvatar(
-                                backgroundImage:
-                                    AssetImage('assets/images/mohsin.png'),
-                                radius: 40,
-                              ),
-                            ),
-                            const SizedBox(height: 8.0),
-                            const Text(
-                              'Mohsin',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                        _buildTeamMember(
+                          context,
+                          'Mohsin',
+                          'assets/images/mohsin.png',
+                          'Backend Developer and Data Analyst',
+                          'https://www.facebook.com/mohsinsrj03',
+                          'https://www.instagram.com/vallagena_kichu/',
+                          'https://www.linkedin.com/in/mohsinsiraj03/',
+                          'https://sites.google.com/view/mohsinsiraj',
                         ),
-                        Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                _showTeamMemberDetails(
-                                  context,
-                                  'Santo',
-                                  'assets/images/Santo.png',
-                                  'Lead Developer and Designer',
-                                  'https://www.facebook.com/shamiulhossensanto',
-                                  'https://www.instagram.com/samiul.hossen/',
-                                  'https://www.linkedin.com/in/samiul-hossen/',
-                                  'https://sites.google.com/view/samiul-hossen-sarkar-santo/about-me',
-                                );
-                              },
-                              child: const CircleAvatar(
-                                backgroundImage:
-                                    AssetImage('assets/images/Santo.png'),
-                                radius: 40,
-                              ),
-                            ),
-                            const SizedBox(height: 8.0),
-                            const Text(
-                              'Santo',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                        _buildTeamMember(
+                          context,
+                          'Santo',
+                          'assets/images/Santo.png',
+                          'Lead Developer and Designer',
+                          'https://www.facebook.com/shamiulhossensanto',
+                          'https://www.instagram.com/samiul.hossen/',
+                          'https://www.linkedin.com/in/samiul-hossen/',
+                          'https://sites.google.com/view/samiul-hossen-sarkar-santo/about-me',
                         ),
                       ],
                     ),
@@ -516,6 +477,39 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTeamMember(
+    BuildContext context,
+    String name,
+    String imageUrl,
+    String bio,
+    String fb,
+    String ln,
+    String ig,
+    String mh,
+  ) {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () {
+            _showTeamMemberDetails(
+                context, name, imageUrl, bio, fb, ln, ig, mh);
+          },
+          child: CircleAvatar(
+            backgroundImage: AssetImage(imageUrl),
+            radius: 40,
+          ),
+        ),
+        const SizedBox(height: 8.0),
+        Text(
+          name,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 }
