@@ -3,7 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 enum RouteModel {
   route1(
     title: "BUP-Uttara",
-    busId: ["busID1", "busID2"],
+    busId: ["uttara1", "uttara2"],
     image: "BUS_ROUTE_STD-0.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -163,7 +163,7 @@ enum RouteModel {
   ),
   route2(
     title: "BUP-JFP-Kakrail",
-    busId: ["busID3", "busID4"],
+    busId: ["jfpkakrail1", "jfpkakrail2", "jfpkakrail3"],
     image: "BUS_ROUTE_STD-1.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -330,7 +330,7 @@ enum RouteModel {
   ),
   route3(
     title: "BUP-Maghbazar-Kakrail",
-    busId: ["busID5", "busID6"],
+    busId: ["mogbazarkakrail1"],
     image: "BUS_ROUTE_STD-2.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -479,7 +479,7 @@ enum RouteModel {
   ),
   route4(
     title: "BUP-Shahbagh",
-    busId: ["busID7", "busID8"],
+    busId: ["shahbagh1", "shahbagh2"],
     image: "BUS_ROUTE_STD-3.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -681,7 +681,7 @@ enum RouteModel {
   ),
   route5(
     title: "BUP-Khamar Bari Mor",
-    busId: ["busID9", "busID10"],
+    busId: ["khamarbarimor1", "khamarbarimor2"],
     image: "BUS_ROUTE_STD-4.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -748,7 +748,7 @@ enum RouteModel {
   ),
   route6(
     title: "BUP-Asad Gate",
-    busId: ["busID11", "busID13"],
+    busId: ["asadgate1", "asadgate2"],
     image: "BUS_ROUTE_STD-5.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -845,7 +845,7 @@ enum RouteModel {
   ),
   route7(
     title: "BUP-City College",
-    busId: ["busID12", "busID14"],
+    busId: ["citycollege1", "citycollege2"],
     image: "BUS_ROUTE_STD-6.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -951,7 +951,7 @@ enum RouteModel {
   ),
   route8(
     title: "BUP-Jahangir Gate",
-    busId: ["busID15", "busID16"],
+    busId: ["jahangirgate1", "jahangirgate2"],
     image: "BUS_ROUTE_STD-7.png",
     start: "BUP",
     startLat: 23.83944781693273,
@@ -1121,6 +1121,23 @@ enum RouteModel {
     end: "Jahangir Gate",
     endLat: 23.775757779527297,
     endLong: 90.38994748427129,
+  ),
+  route9(
+    title: "BUP-Parbat Cinema Hall",
+    busId: ["parbatcinemahall1"],
+    image: "BUS_ROUTE_STD-8.png",
+    start: "BUP",
+    startLat: 23.83944781693273,
+    startLong: 90.35820879403578,
+    stopsInOrder: [
+      "TODO",
+    ],
+    routeCoordinatesInOrder: [
+      LatLng(23.83944781693273, 90.35820879403578),
+    ],
+    end: "TODO",
+    endLat: 23.83944781693273,
+    endLong: 90.35820879403578,
   );
 
   const RouteModel({

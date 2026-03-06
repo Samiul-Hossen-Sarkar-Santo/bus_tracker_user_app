@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:location/location.dart';
+import 'package:bus_tracker_user_app/models/bus_catalogue.dart';
 import 'package:bus_tracker_user_app/models/route_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -40,17 +41,6 @@ class _MapPageState extends State<MapPage> {
   LatLng? _userLocation;
   LatLng? _selectedLocation;
 
-  final Map<String, List<String>> busesForRoute = {
-    "BUP-Uttara": ["busID1", "busID2"],
-    "BUP-JFP-Kakrail": ["busID3", "busID4"],
-    "BUP-Maghbazar-Kakrail": ["busID5", "busID6"],
-    "BUP-Shahbagh": ["busID7", "busID8"],
-    "BUP-Khamar Bari Mor": ["busID9", "busID10"],
-    "BUP-Asad Gate": ["busID11", "busID12"],
-    "BUP-City College": ["busID13", "busID14"],
-    "BUP-Jahangir Gate": ["busID15", "busID16"],
-  };
-
   Map<String, String> busStatuses = {}; // Stores the status of each bus
   final List<StreamSubscription<DatabaseEvent>> _subscriptions = [];
 
@@ -64,16 +54,8 @@ class _MapPageState extends State<MapPage> {
     _listenToBusStatuses();
   }
 
-  String getBusName(String busId) {
-    final route =
-        RouteModel.values.firstWhere((route) => route.title == widget.title);
-    final List<String> busIds = route.busId;
-    if (busIds.first == busId) {
-      return "$busName 1";
-    } else if (busIds.last == busId) {
-      return "$busName 2";
-    }
-    return "";
+  String getBusLabel(String busId) {
+    return busLabelById[busId] ?? busId;
   }
 
   Future<void> _loadCustomIcons() async {
@@ -400,7 +382,7 @@ class _MapPageState extends State<MapPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Route Name",
+                    "Bus No. & Driver",
                     style: TextStyle(
                       fontWeight: FontWeight.w900,
                       color: Colors.black,
@@ -421,7 +403,7 @@ class _MapPageState extends State<MapPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    getBusName(entry.key), //key e bus id ache
+                    getBusLabel(entry.key),
                     style: TextStyle(
                       fontWeight: FontWeight.w900,
                       color: status == "On Route"
