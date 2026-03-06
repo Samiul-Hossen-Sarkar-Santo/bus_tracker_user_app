@@ -16,6 +16,10 @@
           ".validate": false
         }
       }
+    },
+    "Notice": {
+      ".read": true,
+      ".write": "auth != null && auth.token.admin === true"
     }
   }
 }

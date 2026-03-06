@@ -4,7 +4,6 @@ enum RouteModel {
   route1(
     title: "BUP-Uttara",
     busId: ["uttara1", "uttara2"],
-    image: "BUS_ROUTE_STD-0.png",
     start: "BUP",
     startLat: 23.83944781693273,
     startLong: 90.35820879403578,
@@ -164,7 +163,6 @@ enum RouteModel {
   route2(
     title: "BUP-JFP-Kakrail",
     busId: ["jfpkakrail1", "jfpkakrail2", "jfpkakrail3"],
-    image: "BUS_ROUTE_STD-1.png",
     start: "BUP",
     startLat: 23.83944781693273,
     startLong: 90.35820879403578,
@@ -331,7 +329,6 @@ enum RouteModel {
   route3(
     title: "BUP-Maghbazar-Kakrail",
     busId: ["mogbazarkakrail1"],
-    image: "BUS_ROUTE_STD-2.png",
     start: "BUP",
     startLat: 23.83944781693273,
     startLong: 90.35820879403578,
@@ -480,7 +477,6 @@ enum RouteModel {
   route4(
     title: "BUP-Shahbagh",
     busId: ["shahbagh1", "shahbagh2"],
-    image: "BUS_ROUTE_STD-3.png",
     start: "BUP",
     startLat: 23.83944781693273,
     startLong: 90.35820879403578,
@@ -682,7 +678,6 @@ enum RouteModel {
   route5(
     title: "BUP-Khamar Bari Mor",
     busId: ["khamarbarimor1", "khamarbarimor2"],
-    image: "BUS_ROUTE_STD-4.png",
     start: "BUP",
     startLat: 23.83944781693273,
     startLong: 90.35820879403578,
@@ -749,7 +744,6 @@ enum RouteModel {
   route6(
     title: "BUP-Asad Gate",
     busId: ["asadgate1", "asadgate2"],
-    image: "BUS_ROUTE_STD-5.png",
     start: "BUP",
     startLat: 23.83944781693273,
     startLong: 90.35820879403578,
@@ -846,7 +840,6 @@ enum RouteModel {
   route7(
     title: "BUP-City College",
     busId: ["citycollege1", "citycollege2"],
-    image: "BUS_ROUTE_STD-6.png",
     start: "BUP",
     startLat: 23.83944781693273,
     startLong: 90.35820879403578,
@@ -952,7 +945,6 @@ enum RouteModel {
   route8(
     title: "BUP-Jahangir Gate",
     busId: ["jahangirgate1", "jahangirgate2"],
-    image: "BUS_ROUTE_STD-7.png",
     start: "BUP",
     startLat: 23.83944781693273,
     startLong: 90.35820879403578,
@@ -1125,25 +1117,79 @@ enum RouteModel {
   route9(
     title: "BUP-Parbat Cinema Hall",
     busId: ["parbatcinemahall1"],
-    image: "BUS_ROUTE_STD-8.png",
     start: "BUP",
     startLat: 23.83944781693273,
     startLong: 90.35820879403578,
     stopsInOrder: [
-      "TODO",
+      "Mirpur 12",
+      "Mirpur 11.5",
+      "Mirpur 11",
+      "মিরপুর ১২",
+      "মিরপুর ১১.৫",
+      "মিরপুর ১১",
+      "মিরপুর ৬",
+      "Proshika",
+      "প্রশিকা",
+      "প্রশিক্ষা",
+      "Commerce College",
+      "কমার্স কলেজ",
+      "Sony Hall",
+      "সনি",
+      "Mirpur 01",
+      "মিরপুর ১",
+      "মিরপুর-১",
+      "Mirpur 6",
+      "Ansar Camp",
+      "আনসার ক্যাম্প",
+      "Bangla College",
+      "বাংলা কলেজ",
+      "Technical",
+      "টেকনিক্যাল",
+      "Majar Road",
+      "Mazar Road",
+      "মাজার রোড",
+      "Gabtoli Bus Terminal",
+      "গাবতলী বাস টার্মিনাল",
+      "Gabtoli",
+      "গাবতলী",
+      "Parbat Cinema Hall",
+      "Porbot Cinema Hall",
+      "পর্বত সিনেমা হল",
+      "Parbat Super Market",
+      "Porbot Super Market",
+      "পর্বত সুপার মার্কেট",
     ],
     routeCoordinatesInOrder: [
-      LatLng(23.83944781693273, 90.35820879403578),
+      LatLng(23.83944781693273, 90.35820879403578), // BUP In Gate
+      LatLng(23.834961899131887, 90.35881453781377), // DSCSC
+      LatLng(23.831960189009205, 90.36158785487743), // DSCSC Mosque
+      LatLng(23.831993428090584, 90.3636712000425), // NDC
+      LatLng(23.82450543703228, 90.36437900329229), // Mirpur 11.5
+      LatLng(23.81575733203357, 90.36609331950163), // Mirpur 11/Milk-vita Road
+      LatLng(23.81497659913363, 90.36272507856626), // Spartan Fitness
+      LatLng(23.811432855624155, 90.36078667427861), // Nishat Bike Zone
+      LatLng(23.809448679628332, 90.36116408985072), // Proshika
+      LatLng(23.806011086470996, 90.35154979834113), // Commerce College
+      LatLng(23.805125077616925, 90.35166838227215), // Commerce College mor
+      LatLng(23.79997655599662, 90.3552123423596), // Sony Hall
+      LatLng(23.798556103428073, 90.35323394679146), // Mirpur 01
+      LatLng(23.785152440899125, 90.35384335041337), // Bangla College
+      LatLng(23.781608038156982, 90.35178387650694), // Technical
+      LatLng(23.782669546478928, 90.3491679379336),
+      LatLng(23.78296788777076, 90.34719032486105), //Majar Road
+      LatLng(23.78329676777921, 90.34425441731203), // Gabtoli Bus Terminal
+      LatLng(23.78327489937904, 90.34184559955588),
+      LatLng(23.78305817513165, 90.33987615910232),
+      LatLng(23.783234914580238, 90.33814565212752), // Parbat Cinema Hall
     ],
-    end: "TODO",
-    endLat: 23.83944781693273,
-    endLong: 90.35820879403578,
+    end: "Parbat Cinema Hall",
+    endLat: 23.783234914580238,
+    endLong: 90.33814565212752,
   );
 
   const RouteModel({
     required this.title,
     required this.busId,
-    required this.image,
     required this.start,
     required this.startLat,
     required this.startLong,
@@ -1156,7 +1202,6 @@ enum RouteModel {
 
   final String title;
   final List<String> busId;
-  final String image;
   final String start;
   final double startLat;
   final double startLong;

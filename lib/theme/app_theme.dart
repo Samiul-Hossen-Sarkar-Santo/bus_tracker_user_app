@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppTheme {
   // Light Theme Colors
   static const Color primaryGreen = Color(0xFF1B5E20); // Colors.green[900]
-  static const Color secondaryGreen = Color(0xFF388E3C); // Colors.green[700]
+  static const Color secondaryGreen = Color.fromARGB(255, 35, 99, 38); // Colors.green[700]
   static const Color accentGreen = Color(0xFF4CAF50); // Colors.green[500]
   static const Color lightGreen = Color(0xFFE8F5E9); // Colors.green[100]
 
@@ -11,7 +11,7 @@ class AppTheme {
   static const Color darkPrimaryGreen =
       Color(0xFF1B5E20); // Light green for primary
   static const Color darkSecondaryGreen =
-      Color(0xFF66BB6A); // Slightly darker green
+      Color.fromARGB(255, 35, 99, 38); // Slightly darker green
   static const Color darkAccentGreen = Color(0xFF4CAF50); // Same accent
   static const Color darkSurface = Color(0xFF1E1E1E); // Darker surface
   static const Color darkCardColor =

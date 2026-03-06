@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:bus_tracker_user_app/screens/all_routes.dart';
 import 'package:bus_tracker_user_app/screens/emergency_page.dart';
 import 'package:bus_tracker_user_app/theme/app_theme.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:bus_tracker_user_app/screens/route_details.dart';
+import 'package:bus_tracker_user_app/screens/routes_list_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:bus_tracker_user_app/providers/theme_provider.dart';
@@ -15,6 +18,18 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  static const String _webAppUrl = 'https://bus-tracker-bbaa6.web.app/';
+  int _noticePageIndex = 0;
+  int _noticeCount = 0;
+  final PageController _noticePageController = PageController();
+  Timer? _noticeAutoSlideTimer;
+
+  final DatabaseReference _noticeRef = FirebaseDatabase.instanceFor(
+    app: FirebaseDatabase.instance.app,
+    databaseURL:
+        'https://bus-tracker-bbaa6-default-rtdb.asia-southeast1.firebasedatabase.app',
+  ).ref('Notice');
+
   // Function to show the team member's details in a dialog
   void _showTeamMemberDetails(BuildContext context, String name,
       String imageUrl, String bio, String fb, String ln, String ig, String mh) {
@@ -59,6 +74,24 @@ class _HomeState extends State<Home> {
                   },
                 ),
               ],
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  _launchMHURL(mh);
+                },
+                icon: const Icon(Icons.link),
+                label: const Text('Portfolio'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.secondaryGreen,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -124,6 +157,214 @@ class _HomeState extends State<Home> {
     );
   }
 
+  List<String> _extractNoticeLines(Object? rawNotice) {
+    if (rawNotice is String && rawNotice.trim().isNotEmpty) {
+      return [rawNotice.trim()];
+    }
+
+    if (rawNotice is Map) {
+      final noticeEntries = rawNotice.entries
+          .where((entry) => entry.value is String)
+          .map(
+            (entry) => MapEntry(
+              entry.key.toString(),
+              (entry.value as String).trim(),
+            ),
+          )
+          .where((entry) => entry.value.isNotEmpty)
+          .toList()
+        ..sort((a, b) => a.key.compareTo(b.key));
+
+      return noticeEntries.map((entry) => entry.value).toList();
+    }
+
+    return const [];
+  }
+
+  void _syncNoticeAutoSlide(int noticeCount) {
+    _noticeCount = noticeCount;
+
+    if (noticeCount <= 1) {
+      _noticeAutoSlideTimer?.cancel();
+      _noticeAutoSlideTimer = null;
+
+      if (_noticePageIndex != 0 && mounted) {
+        setState(() {
+          _noticePageIndex = 0;
+        });
+      }
+
+      if (_noticePageController.hasClients) {
+        _noticePageController.jumpToPage(0);
+      }
+      return;
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _noticeAutoSlideTimer != null || _noticeCount <= 1) {
+        return;
+      }
+
+      _noticeAutoSlideTimer = Timer.periodic(const Duration(seconds: 4), (_) {
+        if (!mounted ||
+            !_noticePageController.hasClients ||
+            _noticeCount <= 1) {
+          return;
+        }
+
+        final currentPage =
+            (_noticePageController.page ?? _noticePageIndex.toDouble()).round();
+        final nextPage = (currentPage + 1) % _noticeCount;
+
+        _noticePageController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeInOut,
+        );
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _noticeAutoSlideTimer?.cancel();
+    _noticePageController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildNoticeSection(bool isDark) {
+    return StreamBuilder<DatabaseEvent>(
+      stream: _noticeRef.onValue,
+      builder: (context, snapshot) {
+        final notices = snapshot.hasData
+            ? _extractNoticeLines(snapshot.data!.snapshot.value)
+            : const <String>[];
+
+        _syncNoticeAutoSlide(notices.length);
+
+        final hasNotices = notices.isNotEmpty;
+        final currentNoticeIndex =
+            _noticePageIndex < notices.length ? _noticePageIndex : 0;
+        final noticeTextColor =
+            isDark ? Colors.orange[200] : Colors.orange[900];
+
+        return Container(
+          width: double.infinity,
+          margin: const EdgeInsets.only(top: 16.0),
+          padding: const EdgeInsets.only(
+              left: 16.0, right: 16.0, bottom: 16, top: 8),
+          decoration: BoxDecoration(
+            color: isDark ? Colors.transparent : Colors.orange[100],
+            borderRadius: BorderRadius.circular(12.0),
+            border: Border.all(
+              color: isDark ? Colors.orange[800]! : Colors.orange[700]!,
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: isDark
+                    ? Colors.black.withValues(alpha: 0.3)
+                    : Colors.orange[200]!.withValues(alpha: 0.2),
+                blurRadius: 4.0,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Notice',
+                style: TextStyle(
+                  fontSize: 13.0,
+                  fontWeight: FontWeight.bold,
+                  color: noticeTextColor,
+                ),
+              ),
+              const SizedBox(height: 4),
+              if (!hasNotices)
+                Text(
+                  'No notice right now.',
+                  style: TextStyle(
+                    fontSize: 11.0,
+                    fontWeight: FontWeight.w500,
+                    color: isDark ? Colors.white : Colors.orange[900],
+                  ),
+                  textAlign: TextAlign.center,
+                )
+              else if (notices.length == 1)
+                Text(
+                  notices.first,
+                  style: TextStyle(
+                    fontSize: 11.0,
+                    fontWeight: FontWeight.w500,
+                    color: isDark ? Colors.white : Colors.orange[900],
+                  ),
+                  textAlign: TextAlign.center,
+                )
+              else
+                Column(
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      child: PageView.builder(
+                        controller: _noticePageController,
+                        itemCount: notices.length,
+                        onPageChanged: (index) {
+                          if (!mounted) {
+                            return;
+                          }
+                          setState(() {
+                            _noticePageIndex = index;
+                          });
+                        },
+                        itemBuilder: (context, index) => Center(
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              notices[index],
+                              style: TextStyle(
+                                fontSize: 11.0,
+                                fontWeight: FontWeight.w500,
+                                color:
+                                    isDark ? Colors.white : Colors.orange[900],
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        notices.length,
+                        (index) => Container(
+                          width: 6,
+                          height: 6,
+                          margin: const EdgeInsets.symmetric(horizontal: 3),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: index == currentNoticeIndex
+                                ? (isDark ? Colors.white : Colors.black54)
+                                : (isDark
+                                    ? Colors.white.withValues(alpha: 0.35)
+                                    : Colors.black26),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -157,74 +398,31 @@ class _HomeState extends State<Home> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Notice Section
-              Center(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 16.0),
-                  padding: const EdgeInsets.only(
-                      left: 16.0, right: 16.0, bottom: 16, top: 8),
-                  decoration: BoxDecoration(
-                    color: isDark ? Colors.transparent : Colors.orange[100],
-                    borderRadius: BorderRadius.circular(12.0),
-                    border: Border.all(
-                      color: isDark ? Colors.orange[800]! : Colors.orange[700]!,
-                      width: 1.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: isDark
-                            ? Colors.black.withValues(alpha: 0.3)
-                            : Colors.orange[200]!.withValues(alpha: 0.2),
-                        blurRadius: 4.0,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Notice",
-                        style: TextStyle(
-                          fontSize: 13.0,
-                          fontWeight: FontWeight.bold,
-                          color:
-                              isDark ? Colors.orange[200] : Colors.orange[900],
-                        ),
-                      ),
-                      Text(
-                        "New routes are coming soon! Stay tuned for updates.",
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          fontWeight: FontWeight.w500,
-                          color: isDark ? Colors.white : Colors.orange[900],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              // Notice Section (live from RTDB)
+              _buildNoticeSection(isDark),
               const SizedBox(height: 16.0),
               // Find your route
               GestureDetector(
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (ctx) => const RouteDetails()),
+                    MaterialPageRoute(
+                      builder: (ctx) => const RoutesListPage(),
+                    ),
                   );
                 },
                 child: Container(
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
                     color: isDark
-                        ? const Color.fromARGB(255, 18, 75, 21).withValues(alpha: 0.3)
+                        ? const Color.fromARGB(255, 18, 75, 21)
+                            .withValues(alpha: 0.3)
                         : theme.colorScheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12.0),
                     border: Border.all(
                       color: isDark
-                                  ? const Color.fromARGB(204, 181, 181, 181)
-                                  : theme.colorScheme.primary,
+                          ? const Color.fromARGB(204, 181, 181, 181)
+                          : theme.colorScheme.primary,
                       width: 2.0,
                     ),
                   ),
@@ -240,7 +438,7 @@ class _HomeState extends State<Home> {
                               fontSize: 30.0,
                               fontWeight: FontWeight.bold,
                               color: isDark
-                                  ? AppTheme.darkTextColor
+                                  ? Colors.white
                                   : theme.colorScheme.primary,
                             ),
                           ),
@@ -283,13 +481,15 @@ class _HomeState extends State<Home> {
                         padding: const EdgeInsets.all(16.0),
                         decoration: BoxDecoration(
                           color: isDark
-                        ? const Color.fromARGB(255, 18, 75, 21).withValues(alpha: 0.3)
-                        : theme.colorScheme.primary.withValues(alpha: 0.1),
+                              ? const Color.fromARGB(255, 18, 75, 21)
+                                  .withValues(alpha: 0.3)
+                              : theme.colorScheme.primary
+                                  .withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12.0),
                           border: Border.all(
                             color: isDark
-                                  ? const Color.fromARGB(204, 181, 181, 181)
-                                  : theme.colorScheme.primary,
+                                ? const Color.fromARGB(204, 181, 181, 181)
+                                : theme.colorScheme.primary,
                             width: 2.0,
                           ),
                         ),
@@ -305,16 +505,16 @@ class _HomeState extends State<Home> {
                                     fontSize: 20.0,
                                     fontWeight: FontWeight.bold,
                                     color: isDark
-                                  ? AppTheme.darkTextColor
-                                  : theme.colorScheme.primary,
+                                        ? Colors.white
+                                        : theme.colorScheme.primary,
                                   ),
                                 ),
                                 Icon(
                                   Icons.directions_bus,
                                   size: 30.0,
                                   color: isDark
-                                  ? AppTheme.darkTextColor
-                                  : theme.colorScheme.primary,
+                                      ? Colors.white
+                                      : theme.colorScheme.primary,
                                 ),
                               ],
                             ),
@@ -349,13 +549,15 @@ class _HomeState extends State<Home> {
                         padding: const EdgeInsets.all(16.0),
                         decoration: BoxDecoration(
                           color: isDark
-                        ? const Color.fromARGB(255, 18, 75, 21).withValues(alpha: 0.3)
-                        : theme.colorScheme.primary.withValues(alpha: 0.1),
+                              ? const Color.fromARGB(255, 18, 75, 21)
+                                  .withValues(alpha: 0.3)
+                              : theme.colorScheme.primary
+                                  .withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12.0),
                           border: Border.all(
                             color: isDark
-                                  ? const Color.fromARGB(204, 181, 181, 181)
-                                  : theme.colorScheme.primary,
+                                ? const Color.fromARGB(204, 181, 181, 181)
+                                : theme.colorScheme.primary,
                             width: 2.0,
                           ),
                         ),
@@ -371,7 +573,7 @@ class _HomeState extends State<Home> {
                                     fontSize: 20.0,
                                     fontWeight: FontWeight.bold,
                                     color: isDark
-                                        ? AppTheme.darkTextColor
+                                        ? Colors.white
                                         : theme.colorScheme.primary,
                                   ),
                                 ),
@@ -379,8 +581,8 @@ class _HomeState extends State<Home> {
                                   Icons.warning,
                                   size: 30.0,
                                   color: isDark
-                                      ? AppTheme.darkTextColor
-                                      :  theme.colorScheme.primary,
+                                      ? Colors.white
+                                      : theme.colorScheme.primary,
                                 ),
                               ],
                             ),
@@ -390,8 +592,8 @@ class _HomeState extends State<Home> {
                               style: TextStyle(
                                 fontSize: 14.0,
                                 color: isDark
-                                  ? AppTheme.darkTextColor
-                                  : theme.colorScheme.primary,
+                                    ? AppTheme.darkTextColor
+                                    : theme.colorScheme.primary,
                               ),
                             ),
                           ],
@@ -407,13 +609,14 @@ class _HomeState extends State<Home> {
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? const Color.fromARGB(255, 18, 75, 21).withValues(alpha: 0.3)
+                      ? const Color.fromARGB(255, 18, 75, 21)
+                          .withValues(alpha: 0.3)
                       : theme.colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12.0),
                   border: Border.all(
                     color: isDark
-                                  ? const Color.fromARGB(204, 181, 181, 181)
-                                  : theme.colorScheme.primary,
+                        ? const Color.fromARGB(204, 181, 181, 181)
+                        : theme.colorScheme.primary,
                     width: 2.0,
                   ),
                 ),
@@ -424,9 +627,8 @@ class _HomeState extends State<Home> {
                       style: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
-                        color: isDark
-                            ? AppTheme.darkTextColor
-                            : theme.colorScheme.primary,
+                        color:
+                            isDark ? Colors.white : theme.colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 8.0),
@@ -438,18 +640,21 @@ class _HomeState extends State<Home> {
                     ElevatedButton(
                       onPressed: _launchURL,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.primary,
-                        foregroundColor: theme.colorScheme.onPrimary,
+                        backgroundColor: theme.colorScheme.secondary,
+                        foregroundColor: theme.colorScheme.onSecondary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                       ),
-                      child: const Text('Tutorial Video',
-                          style: TextStyle(
-                            fontSize: 16.0, 
-                            color: AppTheme.darkTextColor),
-                    ),
-                )],
+                      child: const Text(
+                        'Tutorial Video',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
+                  ],
                 ),
               ),
               const SizedBox(height: 16.0),
@@ -458,13 +663,14 @@ class _HomeState extends State<Home> {
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? const Color.fromARGB(255, 18, 75, 21).withValues(alpha: 0.3)
+                      ? const Color.fromARGB(255, 18, 75, 21)
+                          .withValues(alpha: 0.3)
                       : theme.colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12.0),
                   border: Border.all(
                     color: isDark
-                                  ? const Color.fromARGB(204, 181, 181, 181)
-                                  : theme.colorScheme.primary,
+                        ? const Color.fromARGB(204, 181, 181, 181)
+                        : theme.colorScheme.primary,
                     width: 2.0,
                   ),
                 ),
@@ -476,7 +682,7 @@ class _HomeState extends State<Home> {
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                         color: isDark
-                            ? AppTheme.darkTextColor
+                            ? Colors.white
                             : theme.colorScheme.primary,
                       ),
                     ),
@@ -492,7 +698,7 @@ class _HomeState extends State<Home> {
                           'https://www.facebook.com/mohsinsrj03',
                           'https://www.instagram.com/vallagena_kichu/',
                           'https://www.linkedin.com/in/mohsinsiraj03/',
-                          'https://sites.google.com/view/mohsinsiraj',
+                          'https://www.linkedin.com/in/mohsinsiraj03/',
                         ),
                         _buildTeamMember(
                           context,
@@ -509,6 +715,30 @@ class _HomeState extends State<Home> {
                   ],
                 ),
               ),
+              const SizedBox(height: 16.0),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    _launchUri(Uri.parse(_webAppUrl));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.secondary,
+                    foregroundColor: theme.colorScheme.onSecondary,
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                  ),
+                  icon: const Icon(Icons.public, color: Colors.white),
+                  label: const Text(
+                    'Open Web App',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16.0),
             ],
           ),
         ),
@@ -543,6 +773,7 @@ class _HomeState extends State<Home> {
           name,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
       ],

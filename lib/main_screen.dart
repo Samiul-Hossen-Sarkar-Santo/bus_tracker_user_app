@@ -1,6 +1,6 @@
 import 'package:bus_tracker_user_app/screens/all_routes.dart';
 import 'package:bus_tracker_user_app/screens/home.dart';
-import 'package:bus_tracker_user_app/screens/route_details.dart';
+import 'package:bus_tracker_user_app/screens/routes_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:in_app_update/in_app_update.dart';
@@ -128,7 +128,7 @@ class _MainScreenState extends State<MainScreen> {
         },
         children: const [
           Home(),
-          RouteDetails(),
+          RoutesListPage(),
           AllRoutesPage(),
         ],
       ),

@@ -1,16 +1,16 @@
 import 'package:bus_tracker_user_app/models/route_model.dart';
-import 'package:bus_tracker_user_app/screens/routes.dart';
+import 'package:bus_tracker_user_app/screens/map_page.dart';
 import 'package:bus_tracker_user_app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
-class RouteDetails extends StatefulWidget {
-  const RouteDetails({super.key});
+class RoutesListPage extends StatefulWidget {
+  const RoutesListPage({super.key});
 
   @override
-  State<RouteDetails> createState() => _RouteDetailsState();
+  State<RoutesListPage> createState() => _RoutesListPageState();
 }
 
-class _RouteDetailsState extends State<RouteDetails> {
+class _RoutesListPageState extends State<RoutesListPage> {
   // Variable to store search query
   String searchQuery = '';
   final TextEditingController searchController = TextEditingController();
@@ -96,7 +96,7 @@ class _RouteDetailsState extends State<RouteDetails> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (ctx) => Routes(routeModel: route),
+                          builder: (ctx) => MapPage(title: route.title),
                         ),
                       );
                     },
