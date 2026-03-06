@@ -698,7 +698,7 @@ class _HomeState extends State<Home> {
                           'https://www.facebook.com/mohsinsrj03',
                           'https://www.instagram.com/vallagena_kichu/',
                           'https://www.linkedin.com/in/mohsinsiraj03/',
-                          'https://www.linkedin.com/in/mohsinsiraj03/',
+                          'https://abd-al-mohsin-siraj.vercel.app',
                         ),
                         _buildTeamMember(
                           context,
