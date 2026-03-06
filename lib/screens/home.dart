@@ -444,14 +444,12 @@ class _HomeState extends State<Home> {
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                       ),
-                      child: Text('Tutorial Video',
+                      child: const Text('Tutorial Video',
                           style: TextStyle(
                             fontSize: 16.0, 
-                            color: isDark
-                                  ? AppTheme.darkTextColor
-                                  : theme.colorScheme.primary)),
+                            color: AppTheme.darkTextColor),
                     ),
-                  ],
+                )],
                 ),
               ),
               const SizedBox(height: 16.0),
