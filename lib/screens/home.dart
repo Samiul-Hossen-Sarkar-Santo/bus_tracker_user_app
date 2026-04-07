@@ -4,6 +4,7 @@ import 'package:bus_tracker_user_app/screens/all_routes.dart';
 import 'package:bus_tracker_user_app/screens/emergency_page.dart';
 import 'package:bus_tracker_user_app/theme/app_theme.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:bus_tracker_user_app/screens/routes_list_page.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,7 +19,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  static const String _webAppUrl = 'https://bus-tracker-bbaa6.web.app/';
+  static const String _webAppUrl = 'https://bus-tracker-bup.web.app/';
+  static const String _playStoreUrl =
+      'https://play.google.com/store/apps/details?id=com.bus_tracker_user_app.app';
   int _noticePageIndex = 0;
   int _noticeCount = 0;
   final PageController _noticePageController = PageController();
@@ -692,6 +695,7 @@ class _HomeState extends State<Home> {
                       children: [
                         _buildTeamMember(
                           context,
+                          isDark,
                           'Mohsin',
                           'assets/images/mohsin.png',
                           'Backend Developer and Data Analyst',
@@ -702,6 +706,7 @@ class _HomeState extends State<Home> {
                         ),
                         _buildTeamMember(
                           context,
+                          isDark,
                           'Santo',
                           'assets/images/Santo.png',
                           'Lead Developer and Designer',
@@ -720,7 +725,8 @@ class _HomeState extends State<Home> {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    _launchUri(Uri.parse(_webAppUrl));
+                    const targetUrl = kIsWeb ? _playStoreUrl : _webAppUrl;
+                    _launchUri(Uri.parse(targetUrl));
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.secondary,
@@ -732,7 +738,7 @@ class _HomeState extends State<Home> {
                   ),
                   icon: const Icon(Icons.public, color: Colors.white),
                   label: const Text(
-                    'Open Web App',
+                    kIsWeb ? 'Open Play Store' : 'Open Web App',
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: Colors.white),
                   ),
@@ -748,6 +754,7 @@ class _HomeState extends State<Home> {
 
   Widget _buildTeamMember(
     BuildContext context,
+    bool isDark,
     String name,
     String imageUrl,
     String bio,
@@ -771,9 +778,9 @@ class _HomeState extends State<Home> {
         const SizedBox(height: 8.0),
         Text(
           name,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: isDark ? Colors.white : AppTheme.primaryGreen,
           ),
         ),
       ],
