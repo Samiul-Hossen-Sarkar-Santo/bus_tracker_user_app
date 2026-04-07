@@ -62,6 +62,11 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
+  web:
+    generate: true
+    image_path: "assets/images/BUP_BUS_TRACKER_LOGO.png"
+    background_color: "#ffffff"
+    theme_color: "#0f5f2f"
   remove_alpha_ios: true
   image_path: "assets/images/BUP_BUS_TRACKER_LOGO.png"
 
