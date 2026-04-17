@@ -111,7 +111,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _launchURL() async {
-    await _launchUri(Uri.parse('https://www.youtube.com/watch?v=7BOIRHh1WPQ'));
+    await _launchUri(Uri.parse('https://youtu.be/_iEINdj3QfU'));
   }
 
   Future<void> _launchFacebookURL(String fb) async {

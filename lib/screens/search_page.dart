@@ -31,19 +31,27 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
   }
 
+  String _normalizeForSearch(String value) {
+    return value.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
+  }
+
   // Function to filter routes based on stoppage name
   void filterRoutes(String query) {
-    final lowercasedQuery = query.toLowerCase();
+    final normalizedQuery = _normalizeForSearch(query);
 
     setState(() {
+      if (normalizedQuery.isEmpty) {
+        filteredRoutes = allRoutes;
+        return;
+      }
+
       filteredRoutes = allRoutes.where((route) {
         // Check if any stoppage in the route matches the query
         return route.stopsInOrder.any((stop) {
-              return stop.toLowerCase().contains(lowercasedQuery);
+              return _normalizeForSearch(stop).contains(normalizedQuery);
             }) ||
-            route.title
-                .toLowerCase()
-                .contains(lowercasedQuery); // Match title too
+            _normalizeForSearch(route.title)
+                .contains(normalizedQuery); // Match title too
       }).toList();
     });
   }
