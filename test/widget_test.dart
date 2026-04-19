@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:bus_tracker_user_app/main.dart';
+import 'package:bus_tracker_user_app/screens/loading.dart';
 
 void main() {
   testWidgets('App bootstrap smoke test', (WidgetTester tester) async {
@@ -16,6 +17,6 @@ void main() {
     await tester.pump();
 
     expect(find.byType(MaterialApp), findsOneWidget);
-    expect(find.text('Welcome to our app!'), findsOneWidget);
+    expect(find.byType(LoadingScreen), findsOneWidget);
   });
 }

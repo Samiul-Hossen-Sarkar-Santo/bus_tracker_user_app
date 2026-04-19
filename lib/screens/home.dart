@@ -22,10 +22,16 @@ class _HomeState extends State<Home> {
   static const String _webAppUrl = 'https://bus-tracker-bup.web.app/';
   static const String _playStoreUrl =
       'https://play.google.com/store/apps/details?id=com.bus_tracker_user_app.app';
+  static const String _playStoreDriverUrl =
+      'https://play.google.com/store/apps/details?id=com.bus_tracker_driver_app.app';
+  static const String _driverTutorialUrl =
+      'https://youtu.be/eDqTXcaPr5Y?si=BYopOJhxeSEZnjQp';
   int _noticePageIndex = 0;
   int _noticeCount = 0;
   final PageController _noticePageController = PageController();
+  final ScrollController _homeScrollController = ScrollController();
   Timer? _noticeAutoSlideTimer;
+  bool _showScrollHint = false;
 
   final DatabaseReference _noticeRef = FirebaseDatabase.instanceFor(
     app: FirebaseDatabase.instance.app,
@@ -160,6 +166,38 @@ class _HomeState extends State<Home> {
     );
   }
 
+  void _showDisclaimerDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Disclaimer'),
+        content: const SingleChildScrollView(
+          child: Text(
+            'BUP Bus Tracker and BUP Bus Tracker- Driver App were developed by students of BUP for the convenience of BUP students, especially daily bus commuters.\n\n'
+            'These apps are independent student initiatives and are not official products of Bangladesh University of Professionals (BUP). They are not affiliated with, endorsed by, or operated by BUP, its authorities, departments, administrative offices, faculty, or employees.\n\n'
+            'The apps are provided solely to support commuting-related information and convenience for students. Users should verify critical information through official university channels when needed.',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            style: TextButton.styleFrom(
+              foregroundColor: AppTheme.primaryGreen,
+              backgroundColor: AppTheme.primaryGreen,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text(
+              'Close',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   List<String> _extractNoticeLines(Object? rawNotice) {
     if (rawNotice is String && rawNotice.trim().isNotEmpty) {
       return [rawNotice.trim()];
@@ -228,8 +266,37 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void _updateScrollHintVisibility() {
+    if (!mounted || !_homeScrollController.hasClients) {
+      return;
+    }
+
+    final position = _homeScrollController.position;
+    final shouldShow =
+        position.maxScrollExtent > 24 &&
+        position.pixels < position.maxScrollExtent - 12;
+
+    if (shouldShow != _showScrollHint) {
+      setState(() {
+        _showScrollHint = shouldShow;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _homeScrollController.addListener(_updateScrollHintVisibility);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateScrollHintVisibility();
+    });
+  }
+
   @override
   void dispose() {
+    _homeScrollController
+        .removeListener(_updateScrollHintVisibility);
+    _homeScrollController.dispose();
     _noticeAutoSlideTimer?.cancel();
     _noticePageController.dispose();
     super.dispose();
@@ -255,7 +322,7 @@ class _HomeState extends State<Home> {
           width: double.infinity,
           margin: const EdgeInsets.only(top: 16.0),
           padding: const EdgeInsets.only(
-              left: 16.0, right: 16.0, bottom: 16, top: 8),
+              left: 8.0, right: 8.0, bottom: 12.0, top: 8.0),
           decoration: BoxDecoration(
             color: isDark ? Colors.transparent : Colors.orange[100],
             borderRadius: BorderRadius.circular(12.0),
@@ -284,7 +351,7 @@ class _HomeState extends State<Home> {
                   color: noticeTextColor,
                 ),
               ),
-              const SizedBox(height: 4),
+              //const SizedBox(height: 4.0),
               if (!hasNotices)
                 Text(
                   'No notice right now.',
@@ -309,7 +376,7 @@ class _HomeState extends State<Home> {
                 Column(
                   children: [
                     SizedBox(
-                      height: 40,
+                      height: 35.0,
                       child: PageView.builder(
                         controller: _noticePageController,
                         itemCount: notices.length,
@@ -373,8 +440,66 @@ class _HomeState extends State<Home> {
     final screenWidth = MediaQuery.of(context).size.width;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final themeProvider = context.watch<ThemeProvider>();
 
     return Scaffold(
+      endDrawer: SafeArea(
+        top: true,
+        bottom: false,
+        child: Drawer(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+          ),
+          backgroundColor: isDark
+              ? Colors.grey.shade900
+              : Colors.grey.shade100,
+          child: Column(
+            children: [
+              DrawerHeader(
+                margin: EdgeInsets.zero,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? AppTheme.primaryGreen
+                      : theme.colorScheme.primary.withValues(alpha: 0.15),
+                ),
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Text(
+                    'Menu',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : theme.colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ),
+              SwitchListTile.adaptive(
+                title: const Text('Dark Theme'),
+                secondary: Icon(
+                  themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                ),
+                value: themeProvider.isDarkMode,
+                onChanged: (_) {
+                  themeProvider.toggleTheme();
+                },
+              ),
+              ListTile(
+                leading: const Icon(
+                  Icons.info_outline,
+                  color: Colors.grey,
+                ),
+                title: const Text('Disclaimer'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _showDisclaimerDialog();
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
       appBar: AppBar(
         title: const Text('BUP Bus Tracker'),
         centerTitle: true,
@@ -382,25 +507,28 @@ class _HomeState extends State<Home> {
             isDark ? AppTheme.primaryGreen : theme.colorScheme.primary,
         foregroundColor: isDark ? Colors.white : theme.colorScheme.onPrimary,
         actions: [
-          IconButton(
-            icon: Icon(
-              context.watch<ThemeProvider>().isDarkMode
-                  ? Icons.light_mode
-                  : Icons.dark_mode,
-              color: isDark ? Colors.white : theme.colorScheme.onPrimary,
+          Builder(
+            builder: (ctx) => IconButton(
+              icon: Icon(
+                Icons.menu,
+                color: isDark ? Colors.white : theme.colorScheme.onPrimary,
+              ),
+              onPressed: () {
+                Scaffold.of(ctx).openEndDrawer();
+              },
             ),
-            onPressed: () {
-              context.read<ThemeProvider>().toggleTheme();
-            },
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            controller: _homeScrollController,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
               // Notice Section (live from RTDB)
               _buildNoticeSection(isDark),
               const SizedBox(height: 16.0),
@@ -445,11 +573,11 @@ class _HomeState extends State<Home> {
                                   : theme.colorScheme.primary,
                             ),
                           ),
-                          const SizedBox(height: 10.0),
+                          const SizedBox(height: 4.0),
                           Text(
                             'Click to search for your route',
                             style: TextStyle(
-                              fontSize: 15.0,
+                              fontSize: 14.0,
                               color: isDark
                                   ? AppTheme.darkTextColor
                                   : theme.colorScheme.primary,
@@ -607,6 +735,147 @@ class _HomeState extends State<Home> {
                 ],
               ),
               const SizedBox(height: 16.0),
+              //Driver App Promotion Section
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? const Color.fromARGB(255, 18, 75, 21)
+                          .withValues(alpha: 0.3)
+                      : theme.colorScheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12.0),
+                  border: Border.all(
+                    color: isDark
+                        ? const Color.fromARGB(204, 181, 181, 181)
+                        : theme.colorScheme.primary,
+                    width: 2.0,
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text.rich(
+                        TextSpan(
+                          style: TextStyle(
+                            color: isDark
+                                ? Colors.white
+                                : theme.colorScheme.primary,
+                          ),
+                          children: const [
+                            /*TextSpan(
+                              text: 'Know how to use\n',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),*/
+                            TextSpan(
+                              text: 'BUP Bus Tracker- Driver App',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text.rich(
+                        TextSpan(
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurface,
+                            fontSize: 14,
+                            height: 1.4,
+                          ),
+                          children: const [
+                            TextSpan(
+                              text: 'The driver app is available only on the ',
+                            ),
+                            TextSpan(
+                              text: 'Google Play Store',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  '. Watch the tutorial video to learn how to use the driver app, or download to try it out!',
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              const targetUrl = _driverTutorialUrl;
+                              _launchUri(Uri.parse(targetUrl));
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: theme.colorScheme.secondary,
+                              foregroundColor: theme.colorScheme.onSecondary,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 12.0,
+                                horizontal: 8.0,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                            ),
+                            child: const Text(
+                              'Tutorial Video',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12.0),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              const targetUrl = _playStoreDriverUrl;
+                              _launchUri(Uri.parse(targetUrl));
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: theme.colorScheme.secondary,
+                              foregroundColor: theme.colorScheme.onSecondary,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 12.0,
+                                horizontal: 8.0,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                            ),
+                            child: const Text(
+                              'Download',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16.0),
               // Tutorial Section
               Container(
                 padding: const EdgeInsets.all(16.0),
@@ -626,7 +895,7 @@ class _HomeState extends State<Home> {
                 child: Column(
                   children: [
                     Text(
-                      'Confused on how to use the app?',
+                      'Confused on how to use this app?',
                       style: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
@@ -684,9 +953,8 @@ class _HomeState extends State<Home> {
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
-                        color: isDark
-                            ? Colors.white
-                            : theme.colorScheme.primary,
+                        color:
+                            isDark ? Colors.white : theme.colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 20.0),
@@ -709,7 +977,7 @@ class _HomeState extends State<Home> {
                           isDark,
                           'Santo',
                           'assets/images/Santo.png',
-                          'Lead Developer and Designer',
+                          'Lead Developer and UI/UX Engineer',
                           'https://www.facebook.com/shamiulhossensanto',
                           'https://www.instagram.com/samiul.hossen/',
                           'https://www.linkedin.com/in/samiul-hossen/',
@@ -744,10 +1012,53 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16.0),
-            ],
+                  const SizedBox(height: 56.0),
+                ],
+              ),
+            ),
           ),
-        ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 9,
+            child: IgnorePointer(
+              child: AnimatedOpacity(
+                opacity: _showScrollHint ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 220),
+                child: Center(
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.black.withValues(alpha: 0.45)
+                          : Colors.white.withValues(alpha: 0.9),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          size: 18,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                        Text(
+                          'Scroll for more',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

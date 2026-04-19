@@ -2,9 +2,6 @@ import 'package:bus_tracker_user_app/screens/all_routes.dart';
 import 'package:bus_tracker_user_app/screens/home.dart';
 import 'package:bus_tracker_user_app/screens/routes_list_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'package:in_app_update/in_app_update.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:bus_tracker_user_app/theme/app_theme.dart';
 
 class MainScreen extends StatefulWidget {
@@ -26,90 +23,10 @@ class _MainScreenState extends State<MainScreen> {
     _pageController.jumpToPage(index); // Navigate to the selected page
   }
 
-  Future<String> getCurrentVersion() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    return packageInfo.version;
-  }
-
-  Future<void> checkForUpdate() async {
-    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
-      return;
-    }
-
-    try {
-      final updateInfo = await InAppUpdate.checkForUpdate();
-      if (!mounted) {
-        return;
-      }
-      if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
-        showUpdateDialog();
-      }
-    } catch (e, stackTrace) {
-      debugPrint('Update check failed: $e');
-      debugPrintStack(stackTrace: stackTrace);
-    }
-  }
-
-  void showUpdateDialog() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Update Available'),
-        backgroundColor: Colors.grey[800],
-        content: const Text(
-          'A new version of the app is available. Please update to enjoy the latest features.',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop(); // Close the dialog
-            },
-            child: const Text(
-              'Later',
-              style: TextStyle(
-                color: Colors.red,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              _performImmediateUpdate();
-            },
-            child: Text(
-              'Update Now',
-              style: TextStyle(
-                color: Colors.green[900],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    checkForUpdate();
-  }
-
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
-  }
-
-  Future<void> _performImmediateUpdate() async {
-    try {
-      await InAppUpdate.performImmediateUpdate();
-    } catch (e, stackTrace) {
-      debugPrint('Immediate update failed: $e');
-      debugPrintStack(stackTrace: stackTrace);
-    }
   }
 
   @override
